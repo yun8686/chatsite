@@ -48,13 +48,13 @@ module.exports = {
   */
   vuetify: {
     theme: {
-      primary: colors.blue.darken2,
-      accent: colors.grey.darken3,
-      secondary: colors.amber.darken3,
-      info: colors.teal.lighten1,
-      warning: colors.amber.base,
-      error: colors.deepOrange.accent4,
-      success: colors.green.accent3
+      primary: "#00bcd4",
+      secondary: "#f44336",
+      accent: "#2196f3",
+      error: "#ff5722",
+      warning: "#ffeb3b",
+      info: "#4caf50",
+      success: "#3f51b5"
     }
   },
   /*
