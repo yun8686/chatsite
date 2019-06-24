@@ -5,40 +5,42 @@
         <v-layout wrap>
           <v-flex xs12>
             <template v-if="display===1">
-              <v-text-field
-                key="roomname"
-                v-model="roomname"
-                label="ルーム名"
-              ></v-text-field>
-              <v-text-field
-                key="maxmember"
-                v-model="maxmember"
-                label="最大入室可能人数"
-                mask="##"
-              ></v-text-field>
-              <v-flex xs12 sm6 class="py-2">
-                <v-btn-toggle v-model="is_private">
-                  <v-btn
-                    flat
-                    key="is_private_false"
-                    value="false"
-                    color="#00F">
-                   公開
-                  </v-btn>
-                  <v-btn
-                    flat
-                    key="is_private_true"
-                    value="true"
-                    color="#F00">
-                   非公開
-                  </v-btn>
-                </v-btn-toggle>
-              </v-flex>
-              <v-btn
-                key="next"
-                v-on:click="next()">
-                次へ
-              </v-btn>
+              <v-form v-model="valid" ref="form" lazy-validation>
+                <v-text-field
+                  key="roomname"
+                  v-model="roomname"
+                  label="ルーム名"
+                ></v-text-field>
+                <v-text-field
+                  key="maxmember"
+                  v-model="maxmember"
+                  label="最大入室可能人数"
+                  mask="##"
+                ></v-text-field>
+                <v-flex xs12 sm6 class="py-2">
+                  <v-btn-toggle v-model="is_private">
+                    <v-btn
+                      flat
+                      key="is_private_false"
+                      value="false"
+                      color="#00F">
+                     公開
+                    </v-btn>
+                    <v-btn
+                      flat
+                      key="is_private_true"
+                      value="true"
+                      color="#F00">
+                     非公開
+                    </v-btn>
+                  </v-btn-toggle>
+                </v-flex>
+                <v-btn
+                  key="next"
+                  v-on:click="next()">
+                  次へ
+                </v-btn>
+              </v-form>
             </template>
             <template v-else-if="display===2">
               <v-text-field
@@ -68,9 +70,14 @@
 
 
 <script>
+import firebase from '../../plugins/firebase';
+const db = firebase.firestore();
+const chatsRef = db.collection('chats');
+
 export default {
   layout: 'no_header',
   data: ()=>({
+    valid: true,
     display: 1,
     roomname: "",
     maxmember: "12",
@@ -80,13 +87,16 @@ export default {
     email: "",
   }),
   methods:{
-    next: function (message) {
+    next: async function (message) {
       this.display = 2;
     },
     back: function (message) {
       this.display = this.display-1;
     },
     commit: function (message) {
+      const creator_id = this.creator_id;
+      // ルームID存在チェック
+
       console.log(JSON.stringify({
         roomname: this.roomname,
         maxmember: this.maxmember,
@@ -95,6 +105,11 @@ export default {
         creator_pw: this.creator_pw,
         email: this.email,
       }))
+    },
+
+    isExistsCreatorId: async function(creator_id){
+      const chatRef = chatsRef.doc(creator_id);
+      await chatRef.get();
     },
   }
 }
