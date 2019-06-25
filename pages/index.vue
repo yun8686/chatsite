@@ -6,11 +6,11 @@
     </v-card>
     <v-card>
       <v-card-title class="font-weight-bold">チャットルーム編集</v-card-title>
-      <v-btn color="success">Success</v-btn>
+      <v-btn color="success" to="/room/edit">Success</v-btn>
     </v-card>
     <v-card>
       <v-card-title class="font-weight-bold">チャットルーム検索</v-card-title>
-      <v-btn color="success">Success</v-btn>
+      <v-btn color="success" to="/search">Success</v-btn>
     </v-card>
   </v-flex>
 </template>
