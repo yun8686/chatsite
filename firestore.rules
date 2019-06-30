@@ -2,7 +2,11 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     match /chats/{document=**} {
+    	allow read: if resource == null;
       allow create; // チャットの作成は可能
+    }
+    match /manages/{document=**} {
+      allow create; // マネージの作成は可能
     }
   }
 }

@@ -11,16 +11,23 @@
       </v-form>
 
       <v-list two-line>
-        <template v-for="(item, index) in items">
+        <template v-if="loading==true">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </template>
+        <template v-else v-for="(item, index) in items">
           <v-subheader
             v-if="item.header"
-            :key=index item.header
+            :key="'index'+index"
           >
             {{ item.header }}
           </v-subheader>
 
           <v-list-tile
             v-else
+            :to="item.link"
             :key="item.key"
             @click="search()"
           >
@@ -30,7 +37,7 @@
             </v-list-tile-content>
           </v-list-tile>
           <v-divider
-            :key=divider item.header
+            :key="'divider'+index"
           ></v-divider>
         </template>
       </v-list>
@@ -40,39 +47,56 @@
 
 
 <script>
+//import localApi from '@/plugins/localApi';
+import localApi from '@/plugins/localApi/debug';
+
 export default {
   layout: 'no_header',
   data: ()=>({
+    loading: true,
     keyword: "",
-    items: [
-      { header: 'Today' },
-      {
-        key: "waiwai1",
-        title: 'わいわいチャット１',
-        subtitle: 'わいわい'
-      },
-      {
-        key: "waiwai2",
-        title: 'わいわいチャット２',
-        subtitle: 'わいわい'
-      },
-      {
-        key: "waiwai3",
-        title: 'わいわいチャット３',
-        subtitle: 'わいわい'
-      },
-      { header: 'Yesterday' },
-      {
-        key: "waiwai4",
-        title: 'わいわいチャット４',
-        subtitle: 'わいわい'
-      },
-    ],
+    items: [],
   }),
+  mounted: function(){
+    localApi.searchChatroom({})
+    .then(response=>{
+      this.items = response.data.map(v=>{
+        return {
+          key: v.roomId,
+          title: v.roomname,
+          subtitle: "",
+          link: '/chat/' + v.roomId,
+        };
+      });
+    })
+    .catch(()=>{
+      this.items = [];
+    })
+    .finally(()=>{
+      this.loading = false;
+    });
+  },
   methods:{
-    search(message) {
+    search: async function(message) {
       // 検索
-      console.log("kensaku")
+      this.loading = true;
+      localApi.searchChatroom({})
+      .then(response=>{
+        this.items = response.data.map(v=>{
+          return {
+            key: v.roomId,
+            title: v.roomname,
+            subtitle: "",
+            link: '/chat/' + v.roomId,
+          };
+        });
+      })
+      .catch(()=>{
+        this.items = [];
+      })
+      .finally(()=>{
+        this.loading = false;
+      });
     },
   }
 }

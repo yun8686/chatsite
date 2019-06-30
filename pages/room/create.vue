@@ -59,7 +59,7 @@
                 label="メールアドレス"
               ></v-text-field>
               <v-btn key="back" v-on:click="back()">戻る</v-btn>
-              <v-btn  key="commit" v-on:click="commit()">作成</v-btn>
+              <v-btn key="commit" v-bind:disabled="isSubmitting" v-on:click="commit()">作成</v-btn>
             </template>
           </v-flex>
         </v-layout>
@@ -70,9 +70,7 @@
 
 
 <script>
-import firebase from '../../plugins/firebase';
-const db = firebase.firestore();
-const chatsRef = db.collection('chats');
+import axios from 'axios';
 
 export default {
   layout: 'no_header',
@@ -85,6 +83,7 @@ export default {
     creator_id: "",
     creator_pw: "",
     email: "",
+    isSubmitting: false,
   }),
   methods:{
     next: async function (message) {
@@ -93,23 +92,18 @@ export default {
     back: function (message) {
       this.display = this.display-1;
     },
-    commit: function (message) {
-      const creator_id = this.creator_id;
-      // ルームID存在チェック
-
-      console.log(JSON.stringify({
-        roomname: this.roomname,
-        maxmember: this.maxmember,
+    commit: async function (message) {
+      this.isSubmitting = true;
+      await axios.post('/api/room', {
+        roomname: this.roomname, maxmember: this.maxmember,
         is_private: this.is_private,
-        creator_id: this.creator_id,
-        creator_pw: this.creator_pw,
-        email: this.email,
-      }))
+        creator_id: this.creator_id, creator_pw: this.creator_pw, email:this.email,
+      }).then(response => {
+      }).catch(error=>{
+      }).finally(()=>{this.isSubmitting = false;})
+      ;
     },
-
     isExistsCreatorId: async function(creator_id){
-      const chatRef = chatsRef.doc(creator_id);
-      await chatRef.get();
     },
   }
 }

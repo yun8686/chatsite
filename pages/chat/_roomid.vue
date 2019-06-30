@@ -1,5 +1,5 @@
 <template>
-  <v-app id="search/index">
+  <v-app id="chat/room">
     <v-content>
       <v-list two-line>
         <template v-for="(item, index) in items">
@@ -15,8 +15,8 @@
             :key="'chat'+index"
           >
             <v-list-tile-content>
-              <v-list-tile-title v-html="item.title"></v-list-tile-title>
-              <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
+              <v-list-tile-title v-html="item.message"></v-list-tile-title>
+              <v-list-tile-sub-title v-html="item.author"></v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
           <v-divider
@@ -40,34 +40,24 @@
 
 
 <script>
+//import localApi from '@/plugins/localApi';
+import localApi from '@/plugins/localApi/debug';
+
 export default {
   layout: 'no_header',
   data: ()=>({
     keyword: "",
-    items: [
-      { header: 'Today' },
-      {
-        title: 'わいわいチャット１',
-        subtitle: 'わいわい'
-      },
-      {
-        title: 'わいわいチャット２',
-        subtitle: 'わいわい'
-      },
-      {
-        title: 'わいわいチャット３',
-        subtitle: 'わいわい'
-      },
-      {
-        title: 'わいわいチャット４',
-        subtitle: 'わいわい'
-      },
-    ],
+    items: [],
   }),
+  mounted: function(){
+    localApi.getMessage({roomId: this.$route.params.roomid})
+    .then(response=>{
+      this.items = response.data;
+    });
+  },
   methods:{
-    submit(message) {
+    submit() {
       // 発言
-      this.items.push({title: this.keyword, subtitle: this.keyword});
     },
   }
 }
