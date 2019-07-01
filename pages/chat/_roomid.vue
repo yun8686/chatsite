@@ -44,32 +44,44 @@
 import localApi from '@/plugins/localApi/debug';
 import firebase from '@/plugins/firebase';
 const db = firebase.firestore();
+let roomRef = null;
 let uid = null;
+
 export default {
   layout: 'no_header',
   data: ()=>({
     keyword: "",
     items: [],
+    roomId: null,
   }),
   mounted: function(){
+    this.roomId = this.$route.params.roomid;
+    roomRef = db.collection("chats").doc(this.roomId);
     // ユーザー認証
     uid = firebase.auth().signInAnonymously();
-    firebase.auth().onAuthStateChanged(user=>{if(user)uid=user.uid;});
+    firebase.auth().onAuthStateChanged(user=>{
+      if(user){
+        uid = user.uid;
+        roomRef.collection("members").doc(uid).set({
+        });
+      }
+//      this.items.push({message: this.roomId});
+    });
 
     // メッセージ受信時
-    db.collection("messages").onSnapshot(doc=>{
+    roomRef.collection("messages").onSnapshot(doc=>{
       doc.docChanges().forEach(v=>{
         if(v.type == "added"){
           this.items.push(v.doc.data());
         }
       });
     });
-    
+
   },
   methods:{
     submit() {
       // 発言
-      db.collection('messages').add({"author": "aob", "message": this.keyword, "uid": uid});
+      roomRef.collection('messages').add({"author": "aob", "message": this.keyword, "uid": uid});
     },
   }
 }

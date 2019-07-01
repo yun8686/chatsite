@@ -8,7 +8,5 @@ if (!firebase.apps.length) {
     "projectId": "freeroom-53002"
   });
   const db = firebase.firestore()
-  const settings = { timestampsInSnapshots: true }
-  db.settings(settings);
 }
 export default firebase
