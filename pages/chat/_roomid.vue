@@ -42,7 +42,9 @@
 <script>
 //import localApi from '@/plugins/localApi';
 import localApi from '@/plugins/localApi/debug';
-
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
+let uid = null;
 export default {
   layout: 'no_header',
   data: ()=>({
@@ -50,14 +52,24 @@ export default {
     items: [],
   }),
   mounted: function(){
-    localApi.getMessage({roomId: this.$route.params.roomid})
-    .then(response=>{
-      this.items = response.data;
+    // ユーザー認証
+    uid = firebase.auth().signInAnonymously();
+    firebase.auth().onAuthStateChanged(user=>{if(user)uid=user.uid;});
+
+    // メッセージ受信時
+    db.collection("messages").onSnapshot(doc=>{
+      doc.docChanges().forEach(v=>{
+        if(v.type == "added"){
+          this.items.push(v.doc.data());
+        }
+      });
     });
+    
   },
   methods:{
     submit() {
       // 発言
+      db.collection('messages').add({"author": "aob", "message": this.keyword, "uid": uid});
     },
   }
 }
