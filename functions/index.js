@@ -20,3 +20,4 @@
  app.use('/api/room', roomsRouter);
 
  exports.api = functions.https.onRequest(app);
+ exports.chatProcess = require('./background/chat.js');

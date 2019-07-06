@@ -70,7 +70,8 @@
 
 
 <script>
-import axios from 'axios';
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
 
 export default {
   layout: 'no_header',
@@ -94,14 +95,13 @@ export default {
     },
     commit: async function (message) {
       this.isSubmitting = true;
-      await axios.post('/api/room', {
-        roomname: this.roomname, maxmember: this.maxmember,
+      await db.collection("chats").add({
+        title: this.roomname,
+        maxmember: this.maxmember,
         is_private: this.is_private,
         creator_id: this.creator_id, creator_pw: this.creator_pw, email:this.email,
-      }).then(response => {
-      }).catch(error=>{
-      }).finally(()=>{this.isSubmitting = false;})
-      ;
+      });
+      this.isSubmitting = false;
     },
     isExistsCreatorId: async function(creator_id){
     },

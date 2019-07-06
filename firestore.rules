@@ -5,13 +5,14 @@ service cloud.firestore {
   }
   match /databases/{database}/documents {
     match /chats/{roomid} { // チャットルーム
+    	allow read;
       match /messages/{document=**} { // メッセージはメンバーのみ
-        allow read: if isMember(database, roomid, request.auth.uid);
+        allow read; 	// : if isMember(database, roomid, request.auth.uid);
         allow write: if isMember(database, roomid, request.auth.uid);
       }
       match /members/{document=**} {  // メンバーの参照はメンバーのみ可能
-        allow read: if isMember(database, roomid, request.auth.uid);
-        //allow write;	//: if isMember(database, roomid, request.auth.uid);
+        allow read; //: if isMember(database, roomid, request.auth.uid);
+        allow write;	//: if isMember(database, roomid, request.auth.uid);
       }
 
     }

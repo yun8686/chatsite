@@ -47,8 +47,8 @@
 
 
 <script>
-//import localApi from '@/plugins/localApi';
-import localApi from '@/plugins/localApi/debug';
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
 
 export default {
   layout: 'no_header',
@@ -58,19 +58,20 @@ export default {
     items: [],
   }),
   mounted: function(){
-    localApi.searchChatroom({})
-    .then(response=>{
-      this.items = response.data.map(v=>{
-        return {
-          key: v.roomId,
-          title: v.roomname,
+    this.loading = true;
+    db.collection("chats").get()
+    .then(snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+        items.push({
+          key: doc.id,
+          title: doc.data().title,
           subtitle: "",
-          link: '/chat/' + v.roomId,
-        };
+          link: '/chat/' + doc.id,
+        });
       });
-    })
-    .catch(()=>{
-      this.items = [];
+      this.items = items;
     })
     .finally(()=>{
       this.loading = false;
@@ -80,19 +81,21 @@ export default {
     search: async function(message) {
       // 検索
       this.loading = true;
-      localApi.searchChatroom({})
-      .then(response=>{
-        this.items = response.data.map(v=>{
-          return {
-            key: v.roomId,
-            title: v.roomname,
+      db.collection("chats")
+//      .where('capital', '==', true)
+      .get()
+      .then(snapshot => {
+        const items = [];
+        snapshot.forEach(doc => {
+          console.log(doc.id, '=>', doc.data());
+          items.push({
+            key: doc.id,
+            title: doc.data().title,
             subtitle: "",
-            link: '/chat/' + v.roomId,
-          };
+            link: '/chat/' + doc.id,
+          });
         });
-      })
-      .catch(()=>{
-        this.items = [];
+        this.items = items;
       })
       .finally(()=>{
         this.loading = false;
