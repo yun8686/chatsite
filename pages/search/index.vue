@@ -33,7 +33,7 @@
           >
             <v-list-tile-content>
               <v-list-tile-title v-html="item.title"></v-list-tile-title>
-              <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
+              <v-list-tile-sub-title v-html="item.tags"></v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
           <v-divider
@@ -67,6 +67,7 @@ export default {
         items.push({
           key: doc.id,
           title: doc.data().title,
+          tags: doc.data().tags,
           subtitle: "",
           link: '/chat/' + doc.id,
         });
@@ -91,6 +92,7 @@ export default {
           items.push({
             key: doc.id,
             title: doc.data().title,
+            tags: doc.data().tags,
             subtitle: "",
             link: '/chat/' + doc.id,
           });
