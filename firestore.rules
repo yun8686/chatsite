@@ -6,6 +6,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /chats/{roomid} { // チャットルーム
     	allow read;
+    	allow create;
       match /messages/{document=**} { // メッセージはメンバーのみ
         allow read; 	// : if isMember(database, roomid, request.auth.uid);
         allow write: if isMember(database, roomid, request.auth.uid);

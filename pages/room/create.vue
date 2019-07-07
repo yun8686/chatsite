@@ -96,7 +96,7 @@ export default {
     commit: async function (message) {
       this.isSubmitting = true;
       await db.collection("chats").add({
-        title: this.roomname,
+        title: this.roomname, tags: ["わいわい", "20代"],
         maxmember: this.maxmember,
         is_private: this.is_private,
         creator_id: this.creator_id, creator_pw: this.creator_pw, email:this.email,
