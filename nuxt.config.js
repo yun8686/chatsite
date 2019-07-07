@@ -30,6 +30,7 @@ module.exports = {
   ** Global CSS
   */
   css: [
+    '@/assets/css/base.css'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -56,7 +57,7 @@ module.exports = {
       error: "#ff5722",
       warning: "#ffeb3b",
       info: "#4caf50",
-      success: "#3f51b5"
+      success: "#3f51b5",
     }
   },
   /*

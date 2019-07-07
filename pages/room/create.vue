@@ -5,61 +5,44 @@
         <v-layout wrap>
           <v-flex xs12>
             <template v-if="display===1">
-              <v-form v-model="valid" ref="form" lazy-validation>
-                <v-text-field
-                  key="roomname"
-                  v-model="roomname"
-                  label="ルーム名"
-                ></v-text-field>
-                <v-text-field
-                  key="maxmember"
-                  v-model="maxmember"
-                  label="最大入室可能人数"
-                  mask="##"
-                ></v-text-field>
-                <v-flex xs12 sm6 class="py-2">
-                  <v-btn-toggle v-model="is_private">
-                    <v-btn
-                      flat
-                      key="is_private_false"
-                      value="false"
-                      color="#00F">
-                     公開
-                    </v-btn>
-                    <v-btn
-                      flat
-                      key="is_private_true"
-                      value="true"
-                      color="#F00">
-                     非公開
-                    </v-btn>
-                  </v-btn-toggle>
-                </v-flex>
-                <v-btn
-                  key="next"
-                  v-on:click="next()">
-                  次へ
-                </v-btn>
-              </v-form>
+              <v-card class="ma-2">
+                <v-card-title class="font-weight-bold title">ルーム作成</v-card-title>
+                <v-container class="mx-16">
+                  <v-form v-model="valid" ref="form" lazy-validation>
+
+                    <v-text-field key="roomname" v-model="roomname" label="ルーム名"></v-text-field>
+                    <v-text-field key="maxmember" v-model="maxmember" label="最大入室可能人数" mask="##"></v-text-field>
+                    <v-layout xs12 sm6 class="py-2">
+                      <v-flex xs2 class="py-2">公開設定</v-flex>
+                      <v-btn-toggle class="text-xs-center" v-model="is_private">
+                        <v-btn class="min-button font-weight-bold white--text" key="is_private_false" value="false">
+                          公開
+                        </v-btn>
+                        <v-btn class="min-button font-weight-bold white--text" key="is_private_true" value="true">
+                          非公開
+                        </v-btn>
+                      </v-btn-toggle>
+                    </v-layout>
+                    <v-layout>
+                      <v-btn class="min-button" style="margin-left: auto;" key="next" v-on:click="next()">
+                        次へ
+                      </v-btn>
+                    </v-layout>
+                  </v-form>
+                </v-container>
+              </v-card>
             </template>
             <template v-else-if="display===2">
-              <v-text-field
-                key="creator_id"
-                v-model="creator_id"
-                label="編集用ID"
-              ></v-text-field>
-              <v-text-field
-                key="creator_pw"
-                v-model="creator_pw"
-                label="編集用パスワード"
-              ></v-text-field>
-              <v-text-field
-                key="email"
-                v-model="email"
-                label="メールアドレス"
-              ></v-text-field>
-              <v-btn key="back" v-on:click="back()">戻る</v-btn>
-              <v-btn key="commit" v-bind:disabled="isSubmitting" v-on:click="commit()">作成</v-btn>
+              <v-card class="ma-2">
+                <v-card-title class="font-weight-bold title">ルーム作成</v-card-title>
+                <v-container class="mx-16">
+                  <v-text-field key="creator_id" v-model="creator_id" label="編集用ID"></v-text-field>
+                  <v-text-field key="creator_pw" v-model="creator_pw" label="編集用パスワード"></v-text-field>
+                  <v-text-field key="email" v-model="email" label="メールアドレス"></v-text-field>
+                  <v-btn class="min-button" key="back" v-on:click="back()">戻る</v-btn>
+                  <v-btn class="min-button" key="commit" v-bind:disabled="isSubmitting" v-on:click="commit()">作成</v-btn>
+                </v-container>
+              </v-card>
             </template>
           </v-flex>
         </v-layout>

@@ -1,0 +1,17 @@
+.button{
+  min-width: 300px;
+  background-color: #26A69A !important;
+  color: #FFF !important;
+  font-weight: bold;
+}
+
+.min-button{
+  min-width: 80px !important;
+  background-color: #26A69A !important;
+  color: #FFF !important;
+  font-weight: bold;
+}
+
+.v-card {
+  max-width: 600px;
+}
