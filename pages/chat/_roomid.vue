@@ -53,11 +53,8 @@
           </v-list>
 
           <v-form ref="form">
-            <v-text-field
-              key="keyword"
-              v-model="keyword"
-              label="発言"
-            ></v-text-field>
+            <v-text-field key="keyword" v-if="inRoom" v-model="keyword" label="発言"></v-text-field>
+            <v-text-field key="keyword" v-if="!inRoom" v-model="author" label="名前"></v-text-field>
             <v-btn key="talk" v-on:click="submit()" v-if="inRoom">発言</v-btn>
             <v-btn key="login" v-on:click="login()" v-if="!inRoom">入室</v-btn>
             <v-btn key="logout" v-on:click="logout()" v-if="inRoom">退室</v-btn>
@@ -74,85 +71,77 @@
 import firebase from '@/plugins/firebase';
 const db = firebase.firestore();
 let roomRef = null;
-let uid = null;
-
 let messageSnapshotUnstab = ()=>{};
 
 export default {
   layout: 'no_header',
   data: ()=>({
     inRoom: false,
-    uid: "",
+    user: null,
+    author: "",
     username: "",
     keyword: "",
     items: [],
     members: [],
     roomId: null,
   }),
-  mounted: function(){
+  mounted: async function(){
+    await this.getUser();
+    console.log("this.user", this.user, this.user.uid);
     this.roomId = this.$route.params.roomid;
     roomRef = db.collection("chats").doc(this.roomId);
-
-    this.items.push({message: this.uid});
+    this.items.push({message: this.user.uid});
     // メンバー更新時
     roomRef.collection("members").onSnapshot(doc=>{
       doc.docChanges().forEach(v=>{
-        console.log(v);
         if(v.type == "added"){
-          this.members.push({uid: v.doc.id});
+          this.members.push({uid: v.doc.id, name: v.doc.data().author});
         }else if(v.type=="removed"){
           this.members = this.members.filter(w=>w.uid != v.doc.id);
         }
       });
     });
-
-    firebase.auth().onAuthStateChanged(user=>{
-      if(user){
-        // 入室時
-        this.uid = user.uid;
-        roomRef.collection("members").doc(this.uid).set({
-          lastAt: new Date()-0,
-        }).then(()=>{
-          this.inRoom = true;
-          // メッセージ受信時
-          messageSnapshotUnstab = roomRef
-          .collection("messages")
-          .orderBy('createdAt', 'asc')
-          .onSnapshot(doc=>{
-            doc.docChanges().forEach(v=>{
-              if(v.type == "added"){
-                this.items.push(v.doc.data());
-              }
-            });
-          });
-
-        });
-
-      }else{
-        // 退室時
-        this.items = [];
-        messageSnapshotUnstab();
-        this.members = [];
-        this.inRoom = false;
-      }
-    });
-
   },
   methods:{
+    async getUser(){
+      if(this.user) return this.user;
+      let user = firebase.auth().currentUser;
+      if(!user){
+        // 未認証ユーザーは認証する
+        await firebase.auth().signInAnonymously();
+        user = firebase.auth().currentUser;
+      }
+      return this.user = user;
+    },
     async login() {
       // 入室
-      // ユーザー認証
-      const data = await firebase.auth().signInAnonymously();
-      console.log(data);
+      await roomRef.collection("members").doc(this.user.uid).set({
+        name: this.author,
+        lastAt: new Date()-0,
+      });
+      this.inRoom = true;
+      // 新着メッセージを監視
+      messageSnapshotUnstab = roomRef
+        .collection("messages")
+        .orderBy('createdAt', 'asc')
+        .onSnapshot(doc=>{
+          doc.docChanges().forEach(v=>{
+            if(v.type == "added"){
+              this.items.push(v.doc.data());
+            }
+          });
+        });
     },
-    logout() {
-      roomRef.collection("members").doc(this.uid).delete();
-      firebase.auth().signOut();
+    async logout() {
+      messageSnapshotUnstab();
+      this.items = [];
+      roomRef.collection("members").doc(this.user.uid).delete();
+      this.inRoom = false;
     },
-    submit() {
+    async submit() {
       // 発言
       roomRef.collection('messages').add({
-        "author": this.uid,
+        "author": this.author,
         "message": this.keyword,
         "createdAt": new Date(),
       });
