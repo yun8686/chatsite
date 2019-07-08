@@ -12,9 +12,9 @@
 
                     <v-text-field key="roomname" v-model="roomname" label="ルーム名"></v-text-field>
                     <v-text-field key="maxmember" v-model="maxmember" label="最大入室可能人数" mask="##"></v-text-field>
-                    <v-layout xs12 sm6 class="py-2">
-                      <v-flex xs2 class="py-2">公開設定</v-flex>
-                      <v-btn-toggle class="text-xs-center" v-model="is_private">
+                    <v-layout xs12 sm6 class="py-2 row justify-start">
+                      <div class="py-2 pl-3 pr-4">公開設定</div>
+                      <v-btn-toggle mandatory class="text-xs-center ml-0" v-model="is_private">
                         <v-btn class="min-button font-weight-bold white--text" key="is_private_false" value="false">
                           公開
                         </v-btn>
