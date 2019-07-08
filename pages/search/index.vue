@@ -1,16 +1,22 @@
 <template>
   <v-app id="search/index">
-    <v-content>
+    <v-content class="content">
       <v-form ref="form">
-        <v-text-field
-          key="keyword"
-          v-model="keyword"
-          label="キーワード"
-        ></v-text-field>
-        <v-btn key="search" v-on:click="search()">検索</v-btn>
+        <v-layout class="fixed-top px-2 header" :class="{is_fixed:isHeader}">
+            <v-text-field
+              key="keyword"
+              v-model="keyword"
+              label="キーワードをいれてください"
+              class="px-2"
+              v-on:input="search()"
+            ></v-text-field>
+        <!-- <v-btn class="button" key="search" v-on:click="search()">検索</v-btn> -->
+        </v-layout>
+        <v-checkbox class="px-2" v-model="checkbox1" :label="`満員の場合は表示しない`"></v-checkbox>
       </v-form>
 
-      <v-list two-line>
+      <v-list two-line >
+        <v-card class="">
         <template v-if="loading==true">
           <v-progress-circular
             indeterminate
@@ -41,6 +47,7 @@
             :key="'divider'+index"
           ></v-divider>
         </template>
+        </v-card>
       </v-list>
     </v-content>
   </v-app>
@@ -57,6 +64,8 @@ export default {
     loading: true,
     keyword: "",
     items: [],
+    scrollY: 0,
+    isHeader: false,
   }),
   mounted: function(){
     this.loading = true;
@@ -80,6 +89,8 @@ export default {
     .finally(()=>{
       this.loading = false;
     });
+    // スクロール値を検知
+    window.addEventListener('scroll', this.handleScroll)
   },
   methods:{
     search: async function(message) {
@@ -108,6 +119,38 @@ export default {
         this.loading = false;
       });
     },
+    // キーワード検索をフッター吸着にする
+    handleScroll() {
+        this.scrollY = window.scrollY;
+        if(this.scrollY > 160){
+          this.isHeader = true;
+        }
+        else{
+          this.isHeader = false;
+        }
+
+    },
   }
 }
 </script>
+
+<style lang="css" scoped>
+.content{
+  position:relative;
+  padding-top: 64px !important;
+}
+
+.header{
+  position: absolute;
+  top: -64px;
+  width: 100%;
+  z-index: 100;
+  background-color: #FAFAFA;
+}
+
+.header.is_fixed{
+  position: fixed;
+  top: 0;
+}
+
+</style>

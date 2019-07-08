@@ -58,6 +58,7 @@ module.exports = {
       warning: "#ffeb3b",
       info: "#4caf50",
       success: "#3f51b5",
+      background: "#FAFAFA",
     }
   },
   /*

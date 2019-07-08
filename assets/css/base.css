@@ -15,3 +15,9 @@
 .v-card {
   max-width: 600px;
 }
+
+.v-list{
+  padding: 10px;
+  max-width: 620px;
+  background-color: #FAFAFA !important;
+}
