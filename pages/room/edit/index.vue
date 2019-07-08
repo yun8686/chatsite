@@ -14,21 +14,58 @@
         ></v-text-field>
         <v-btn  key="commit" to="/room/edit/manage">編集</v-btn>
       </v-form>
+      <v-list two-line>
+        <template v-for="(item, index) in items">
+          <v-list-tile :key="'item'+index">
+            <v-list-tile-content>
+              <v-list-tile-title v-html="item.title"></v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-divider :key="'itemdivider'+index"></v-divider>
+        </template>
+      </v-list>
     </v-content>
   </v-app>
 </template>
 
 
 <script>
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
+
 export default {
   layout: 'no_header',
   data: ()=>({
+    user: null,
     creator_id: "",
     creator_pw: "12",
+    items: [],
   }),
+  mounted: async function(){
+    await this.getUser();
+    db.collection("manages").where("creator_uid", "==", this.user.uid)
+    .onSnapshot(doc=>{
+      doc.docChanges().forEach(v=>{
+        if(v.type == "added"){
+          const data = v.doc.data();
+          this.items.push({
+            title: data.title,
+          });
+        }
+      });
+    });
+
+  },
   methods:{
-    commit: function (message) {
-      // 認証
+    async getUser(){
+      if(this.user) return this.user;
+      let user = firebase.auth().currentUser;
+      if(!user){
+        // 未認証ユーザーは認証する
+        await firebase.auth().signInAnonymously();
+        user = firebase.auth().currentUser;
+      }
+      return this.user = user;
     },
   }
 }

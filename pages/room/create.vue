@@ -59,6 +59,7 @@ const db = firebase.firestore();
 export default {
   layout: 'no_header',
   data: ()=>({
+    user: null,
     valid: true,
     display: 1,
     roomname: "",
@@ -69,22 +70,47 @@ export default {
     email: "",
     isSubmitting: false,
   }),
+  mounted: async function(){
+    await this.getUser();
+  },
   methods:{
+    // 認証情報
+    async getUser(){
+      if(this.user) return this.user;
+      let user = firebase.auth().currentUser;
+      if(!user){
+        // 未認証ユーザーは認証する
+        await firebase.auth().signInAnonymously();
+        user = firebase.auth().currentUser;
+      }
+      return this.user = user;
+    },
+
     next: async function (message) {
-      this.display = 2;
+      this.display++;
     },
     back: function (message) {
-      this.display = this.display-1;
+      this.display--;
     },
     commit: async function (message) {
       this.isSubmitting = true;
-      await db.collection("chats").add({
+      const batch = db.batch();
+      const chatId = db.collection("chats").doc().id;
+
+      batch.set(db.collection("chats").doc(chatId), {
         title: this.roomname, tags: ["わいわい", "20代"],
         maxmember: this.maxmember,
         nowmember: 0,
         is_private: this.is_private,
-        creator_id: this.creator_id, creator_pw: this.creator_pw, email:this.email,
       });
+      batch.set(db.collection("manages").doc(chatId), {
+        title: this.roomname,
+        creator_uid: this.user.uid,
+        creator_id: this.creator_id,
+        creator_pw: this.creator_pw,
+        email:this.email,
+      });
+      await batch.commit();
       this.isSubmitting = false;
     },
     isExistsCreatorId: async function(creator_id){

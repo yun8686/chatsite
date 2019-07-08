@@ -1,10 +1,14 @@
 // Deny read/write access to all users under any conditions
 service cloud.firestore {
-	function isMember(database, roomid, uid){
-  	return exists(/databases/$(database)/documents/chats/$(roomid)/members/$(uid));
+	function isAuth(uid){
+  	return uid != null;
   }
   match /databases/{database}/documents {
-    match /chats/{roomid} { // チャットルーム
+		// チャットに参加している
+    function isMember(database, roomid, uid){
+      return exists(/databases/$(database)/documents/chats/$(roomid)/members/$(uid));
+    }
+		match /chats/{roomid} { // チャットルーム
     	allow read;
     	allow create;
       match /messages/{document=**} { // メッセージはメンバーのみ
@@ -15,7 +19,15 @@ service cloud.firestore {
         allow read; //: if isMember(database, roomid, request.auth.uid);
         allow write;	//: if isMember(database, roomid, request.auth.uid);
       }
+    }
 
+		// チャットの管理者である
+    function isManager(uid){
+      return resource.data.creator_uid == uid;
+    }
+		match /manages/{roomid} { // 管理者情報
+    	allow create: if isAuth(request.auth.uid);
+      allow read: if isManager(request.auth.uid);
     }
   }
 }
