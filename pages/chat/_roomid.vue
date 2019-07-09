@@ -151,6 +151,7 @@ export default {
         lastAt: new Date()-0,
       });
       this.inRoom = true;
+      this.name = name;
     },
     async logout() {
       this.items = [];
