@@ -8,7 +8,7 @@ const firestore = functions.firestore;
 
 const roomRef = fireStore.collection('chats');
 //const keitaiso = require('./api/yahoo');
-//const kopen = require('./character/kopen');
+const jankenman = require('./character/jankenman');
 
 //const chatRef = firestore.
 
@@ -20,24 +20,20 @@ module.exports = firestore
   if(data.author){
     const roomid = context.params.roomid;
     const messageid = context.params.messageid;
+    data.message;
     console.log("---------------- chat authord ----------------");
-    roomRef.doc(roomid).collection('messages').add({"author": null, "message": "返信マン!", "createdAt": new Date()});
-    //runBot();
+    roomRef.doc(roomid).collection('messages').add({"author": null, "message": runBot(data.message), "createdAt": new Date()});
   }
   return true;
 });
 
 
-function runBot(){
-  keitaiso(data.message, (error, response, body)=>{
-    const words = body.ResultSet.ma_result[0].word_list[0].word;
-    var message;
-    try{
-      message = kopen(words);
-    }catch(e){
-      console.log("-------------error---------------")
-      console.log(e);
-    }
-    roomRef.doc(roomid).collection('messages').add({"author": null, "message": message, "createdAt": new Date()});
-  });
+function runBot(keyword){
+  var answer = "";
+  switch(keyword){
+    case "じゃんけん":
+      answer = jankenman(keyword);
+      break;
+  }
+  return answer;
 }

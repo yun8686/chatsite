@@ -3,7 +3,7 @@
  admin.initializeApp(functions.config().firebase);
 
 // chats/{roomid}/messages/{messageid}
- exports.chatProcess = require('./background/chat.js');
+exports.chatProcess = require('./background/chat.js');
 
 // chats/{roomid}/messages/{members}
-exports.chatProcess = require('./background/members.js');
+//exports.chatProcess = require('./background/members.js');

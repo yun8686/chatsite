@@ -110,6 +110,10 @@ export default {
         creator_pw: this.creator_pw,
         email:this.email,
       });
+      batch.set(db.collection("chat_options").doc(chatId), {
+        welcome_message: "ようこそ、${author}さん",
+        exit_message: "${author}さんが森に返っていきました。",
+      });
       await batch.commit();
       this.isSubmitting = false;
     },

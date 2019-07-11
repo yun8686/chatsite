@@ -16,7 +16,7 @@
       </v-form>
       <v-list two-line>
         <template v-for="(item, index) in items">
-          <v-list-tile :key="'item'+index">
+          <v-list-tile :key="'item'+index" :to="item.link">
             <v-list-tile-content>
               <v-list-tile-title v-html="item.title"></v-list-tile-title>
             </v-list-tile-content>
@@ -50,11 +50,11 @@ export default {
           const data = v.doc.data();
           this.items.push({
             title: data.title,
+            link: './edit/manage/' + v.doc.id,
           });
         }
       });
     });
-
   },
   methods:{
     async getUser(){
