@@ -6,4 +6,4 @@
 exports.chatProcess = require('./background/chat.js');
 
 // chats/{roomid}/messages/{members}
-//exports.chatProcess = require('./background/members.js');
+exports.memberProcess = require('./background/members.js');
