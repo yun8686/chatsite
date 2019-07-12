@@ -22,7 +22,10 @@ module.exports = firestore
     const messageid = context.params.messageid;
     data.message;
     console.log("---------------- chat authord ----------------");
-    roomRef.doc(roomid).collection('messages').add({"author": null, "message": runBot(data.message), "createdAt": new Date()});
+    const botMessage = runBot(data.message);
+    if(botMessage && botMessage.length > 0){
+      roomRef.doc(roomid).collection('messages').add({"author": null, "message": botMessage, "createdAt": new Date()});
+    }
   }
   return true;
 });
