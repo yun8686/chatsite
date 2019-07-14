@@ -15,8 +15,8 @@
         <v-checkbox class="px-2" v-model="checkbox1" :label="`満員の場合は表示しない`"></v-checkbox>
       </v-form>
 
-      <v-list two-line >
-        <v-card class="">
+      <v-list two-line>
+        <v-card>
         <template v-if="loading==true">
           <v-progress-circular
             indeterminate
@@ -31,18 +31,25 @@
             {{ item.header }}
           </v-subheader>
 
-          <v-list-tile
+          <a
             v-else
-            :to="item.link"
+            :href="item.link"
             :key="item.key"
             @click="search()"
+            class="pa-1 card"
           >
-            <v-list-tile-content>
-              <v-list-tile-title v-html="item.title"></v-list-tile-title>
-              <v-list-tile-sub-title v-html="item.tags"></v-list-tile-sub-title>
-              <v-list-tile-sub-title v-html="item.nowmember + '/' + item.maxmember"></v-list-tile-sub-title>
+            <v-list-tile-content class="px-3 pt-2">
+              <v-list-tile-title class="title" v-html="item.title"></v-list-tile-title>
+              <v-flex class="cardText">
+                <div>
+                  <v-list-tile-sub-title v-html="item.tags" class="relatedWord"></v-list-tile-sub-title>
+                </div>
+                <div class="entryNum">
+                  <v-list-tile-sub-title class="entryNum" v-html="'参加者' + item.nowmember + '/' + item.maxmember"></v-list-tile-sub-title>
+                </div>
+              </v-flex>
             </v-list-tile-content>
-          </v-list-tile>
+          </a>
           <v-divider
             :key="'divider'+index"
           ></v-divider>
@@ -151,6 +158,36 @@ export default {
 .header.is_fixed{
   position: fixed;
   top: 0;
+}
+
+.card{
+  display: block;
+  height: 100%;
+  color: #333;
+  text-decoration: none;
+}
+
+.card > a {
+  height: 100% !important;
+}
+
+.relatedWord{
+  flex: 1;
+  word-break: break-word;
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+}
+
+.entryNum{
+  width: auto;
+  margin-left: auto;
+  align-self: flex-end;
+}
+
+.cardText{
+  width: 100% ;
+  display: flex;
 }
 
 </style>
