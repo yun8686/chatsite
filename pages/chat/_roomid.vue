@@ -2,33 +2,14 @@
   <v-app id="chat/room">
     <v-container fluid grid-list-xl>
       <v-layout row>
-        <!-- <v-flex xl4>
-          <v-list two-line>
-            <template v-for="(member, index) in members">
-              <v-subheader
-                v-if="member.header"
-                :key=index member.header
-              >
-                {{ member.header }}
-              </v-subheader>
-
-              <v-list-tile
-                v-else
-                :key="'members'+index"
-              >
-                <v-list-tile-content>
-                  <v-list-tile-title v-html="member.uid"></v-list-tile-title>
-                  <v-list-tile-sub-title v-html="member.name"></v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-divider
-                :key="'divider'+index"
-              ></v-divider>
-            </template>
-          </v-list>
-        </v-flex> -->
         <v-flex xl8>
-          <div class="chat-list">
+          <header class="header" v-if="inRoom">
+            <title class="chatTitle">ここにチャットのタイトルを入れるここにチャットのタイトルを入れる</title>
+            <v-form ref="form">
+              <v-btn key="logout" v-on:click="logout()" v-if="inRoom" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+            </v-form>
+          </header>
+          <div class="chat-list" v-if="inRoom">
             <template v-for="(item, index) in items">
               <v-subheader
                 v-if="item.header"
@@ -55,19 +36,34 @@
                   <div class="date" v-html="item.createdAt"></div>
                 </div>
               </div>
-              <!-- <v-divider
-                :key="'divider'+index"
-              ></v-divider> -->
             </template>
           </div>
+          
+          <div class="">
+            <v-form ref="form">
+              <v-text-field key="keyword" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
+              <v-btn key="login" v-on:click="login()" v-if="!inRoom">入室</v-btn>
+              <v-btn key="logout" v-on:click="logout()" v-if="!inRoom">退室</v-btn>
+            </v-form>
+          </div>
 
-          <v-form ref="form">
-            <v-text-field key="keyword" v-if="inRoom" v-model="keyword" label="発言"></v-text-field>
-            <v-text-field key="keyword" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
-            <v-btn key="talk" v-on:click="submit()" v-if="inRoom">発言</v-btn>
-            <v-btn key="login" v-on:click="login()" v-if="!inRoom">入室</v-btn>
-            <v-btn key="logout" v-on:click="logout()" v-if="inRoom">退室</v-btn>
-          </v-form>
+          <footer class="footer">
+            <v-form ref="form">
+              <div class="footerContents">
+                <v-btn small key="image" v-on:click="imgae()" v-if="inRoom" class="ma-0 imageBtn">
+                  <v-icon>add_photo_alternate</v-icon>
+                </v-btn>
+                <v-text-field  class="commentInput" key="keyword" v-if="inRoom" v-model="keyword" label="コメント記入"></v-text-field>
+                <!-- <v-btn key="talk" v-on:click="submit()" v-if="inRoom" class="commentBtn">
+                  <v-icon>send</v-icon>
+                </v-btn> -->
+                <v-btn small key="talk" v-on:click="submit()" v-if="inRoom" class="ma-0 commentBtn">
+                  <v-icon>send</v-icon>
+                </v-btn>
+                
+              </div>
+            </v-form>
+          </footer>
 
         </v-flex>
       </v-layout>
@@ -121,7 +117,7 @@ export default {
     await this.getUser();
     this.roomId = this.$route.params.roomid;
     roomRef = db.collection("chats").doc(this.roomId);
-    this.items.push({message: this.user.uid});
+    //this.items.push({message: this.user.uid});
     // メンバー更新時
     roomRef.collection("members").onSnapshot(doc=>{
       doc.docChanges().forEach(v=>{
@@ -179,6 +175,44 @@ export default {
 
 
 <style lang="css" scoped>
+/* ヘッダー */
+.header{
+  display: flex;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: #E4E4E4;
+  padding: 0 8px;
+  z-index: 100;
+  align-items: center;
+}
+.chatTitle{
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.exitBtn{
+  min-width: 24px !important;
+  background: inherit !important;
+  box-shadow: none !important;
+  margin: 0;
+  padding: 0;
+  padding-left: 8px;
+  align-self: center;
+}
+
+/* チャット内 */
+.chat-list{
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+
 .chat-item{
   display: flex;
   margin-bottom: 15px;
@@ -239,5 +273,48 @@ export default {
 .date{
   font-size: 10px;
   padding-left: 20px;
+}
+
+/* フッター */
+.footer{
+  width: 100%;
+  position: fixed;
+  bottom: -10px;
+  right: 0;
+  left: 0;
+  background-color: #E4E4E4;
+  padding: 0 8px;
+}
+.footerContents{
+  display: flex;
+}
+
+.imageBtn{
+  min-width: 24px !important;
+  background: inherit !important;
+  box-shadow: none !important;
+  margin: 0;
+  padding: 0;
+  align-self: center;
+}
+.commentBtn{
+  min-width: 24px !important;
+  background: inherit !important;
+  box-shadow: none !important;
+  margin: 0;
+  padding: 0;
+  padding-left: 8px;
+  align-self: center;
+}
+.v-icon{
+  width: 30px;
+}
+
+div.btn__content {
+  padding: 0px;
+}
+
+div.card__actions .btn{
+  min-width: 0;
 }
 </style>
