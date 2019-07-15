@@ -2,7 +2,7 @@
   <v-app id="chat/room">
     <v-container fluid grid-list-xl>
       <v-layout row>
-        <v-flex xl4>
+        <!-- <v-flex xl4>
           <v-list two-line>
             <template v-for="(member, index) in members">
               <v-subheader
@@ -26,9 +26,9 @@
               ></v-divider>
             </template>
           </v-list>
-        </v-flex>
+        </v-flex> -->
         <v-flex xl8>
-          <v-list two-line>
+          <div class="chat-list">
             <template v-for="(item, index) in items">
               <v-subheader
                 v-if="item.header"
@@ -37,22 +37,29 @@
                 {{ item.header }}
               </v-subheader>
 
-              <v-list-tile
+              <div
                 v-else
                 :key="'chat'+index"
+                class="chat-item"
               >
-                <v-list-tile-content>
-                  <v-list-tile-title v-html="item.message"></v-list-tile-title>
-                  <v-list-tile-sub-title v-html="item.author"></v-list-tile-sub-title>
-                  <v-list-tile-sub-title v-html="item.createdAt"></v-list-tile-sub-title>
-
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-divider
+                <div class="account">
+                  <div class="icon">
+                    <img class="iconImage" src="http://icooon-mono.com/i/icon_11213/icon_112131_64.png">
+                  </div>
+                </div>
+                <div>
+                  <div class="author" v-html="item.author"></div>
+                  <div class="speechBubble">
+                    <div class="message" v-html="item.message"></div>
+                  </div>
+                  <div class="date" v-html="item.createdAt"></div>
+                </div>
+              </div>
+              <!-- <v-divider
                 :key="'divider'+index"
-              ></v-divider>
+              ></v-divider> -->
             </template>
-          </v-list>
+          </div>
 
           <v-form ref="form">
             <v-text-field key="keyword" v-if="inRoom" v-model="keyword" label="発言"></v-text-field>
@@ -100,7 +107,7 @@ export default {
                 this.items.push({
                   author: data.author,
                   message: data.message,
-                  createdAt: data.createdAt.toDate(),
+                  createdAt: String(data.createdAt.toDate().getMonth()+1) + '/' + String(data.createdAt.toDate().getDate()) + '  ' + String(data.createdAt.toDate().toLocaleTimeString()),
                 });
               }
             });
@@ -165,7 +172,72 @@ export default {
         message: this.keyword,
         createdAt: new Date(),
       });
-    },
+    }
   }
 }
 </script>
+
+
+<style lang="css" scoped>
+.chat-item{
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.speechBubble{
+  position: relative; /* 三角の位置を固定するために設定 */
+  display: inline-block;
+  max-width: 300px;
+  margin: 0px 20px;
+  padding: 8px 15px; /* ふきだし内の余白 */
+  background: #f0f0f0; /* 背景色 */
+  text-align: left; /* テキストの揃え */
+  border-radius: 15px;
+
+  flex-direction: row;
+  
+}
+
+.speechBubble:after {
+  content: '';
+  border: 14px solid transparent;
+  border-top-color: #f0f0f0;
+  position: absolute;
+  top: 0;
+
+  left: -10px;
+}
+.icon{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #555;
+  overflow: hidden;
+  position: relative;
+}
+.iconImage{
+  width: 20px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+
+.message{
+  font-size: 14px;
+  word-break: break-all;
+  line-height: 1.5;
+}
+.author{
+  font-size: 12px;
+  line-height: 18px;
+  min-height: 18px;
+  padding-left: 18px;
+}
+.date{
+  font-size: 10px;
+  padding-left: 20px;
+}
+</style>
