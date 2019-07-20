@@ -1,29 +1,36 @@
 <template>
   <v-app id="room/edit/index">
     <v-content>
-      <v-form ref="form">
-        <v-text-field
-          key="creator_id"
-          v-model="creator_id"
-          label="ルームID"
-        ></v-text-field>
-        <v-text-field
-          key="creator_pw"
-          v-model="creator_pw"
-          label="編集用パスワード"
-        ></v-text-field>
-        <v-btn  key="commit" to="/room/edit/manage">編集</v-btn>
-      </v-form>
-      <v-list two-line>
-        <template v-for="(item, index) in items">
-          <v-list-tile :key="'item'+index" :to="item.link">
-            <v-list-tile-content>
-              <v-list-tile-title v-html="item.title"></v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-divider :key="'itemdivider'+index"></v-divider>
-        </template>
-      </v-list>
+      <v-card class="ma-2">
+        <v-card-title class="font-weight-bold title">ルーム編集</v-card-title>
+        <v-container class="mx-16">
+          <v-form ref="form">
+            <v-text-field
+              key="creator_id"
+              v-model="creator_id"
+              label="ルームID"
+            ></v-text-field>
+            <v-text-field
+              key="creator_pw"
+              v-model="creator_pw"
+              label="編集用パスワード"
+            ></v-text-field>
+            <v-layout justify-center row wrap class="mb-3">
+              <v-btn class="button font-weight-bold white--text" key="commit" to="/room/edit/manage">編集</v-btn>
+            </v-layout>
+          </v-form>
+          <v-list two-line>
+            <template v-for="(item, index) in items">
+              <v-list-tile :key="'item'+index" :to="item.link">
+                <v-list-tile-content>
+                  <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-divider :key="'itemdivider'+index"></v-divider>
+            </template>
+          </v-list>
+        </v-container>
+      </v-card>
     </v-content>
   </v-app>
 </template>
@@ -70,3 +77,8 @@ export default {
   }
 }
 </script>
+
+<style lang="sass" scoped>
+
+</style>
+
