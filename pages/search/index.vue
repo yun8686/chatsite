@@ -1,26 +1,28 @@
 <template>
   <v-app id="search/index">
     <v-content class="content">
-      <v-form ref="form">
-        <v-layout class="fixed-top px-2 header" :class="{is_fixed:isHeader}">
-            <v-text-field
-              key="keyword"
-              v-model="keyword"
-              label="キーワードをいれてください"
-              class="px-2"
-              v-on:input="search()"
-            ></v-text-field>
-        <!-- <v-btn class="button" key="search" v-on:click="search()">検索</v-btn> -->
-        </v-layout>
-        <v-checkbox class="px-2" v-model="checkbox1" :label="`満員の場合は表示しない`"></v-checkbox>
-      </v-form>
-
+      <v-card class="fixed-top px-2 header" :class="{is_fixed:isHeader}" v-if="loading==false">
+        <v-form ref="form">
+          <v-layout>
+              <v-text-field
+                key="keyword"
+                v-model="keyword"
+                label="キーワードをいれてください"
+                class="px-2"
+                v-on:input="search()"
+              ></v-text-field>
+          <!-- <v-btn class="button" key="search" v-on:click="search()">検索</v-btn> -->
+          </v-layout>
+          <v-checkbox class="px-2 checkbox" v-model="checkbox1" :label="`満員の場合は表示しない`"></v-checkbox>
+        </v-form>
+      </v-card>
       <v-list two-line>
         <v-card>
         <template v-if="loading==true">
           <v-progress-circular
             indeterminate
             color="primary"
+            class="loading"
           ></v-progress-circular>
         </template>
         <template v-else v-for="(item, index) in items">
@@ -126,39 +128,34 @@ export default {
         this.loading = false;
       });
     },
-    // キーワード検索をフッター吸着にする
-    handleScroll() {
-        this.scrollY = window.scrollY;
-        if(this.scrollY > 160){
-          this.isHeader = true;
-        }
-        else{
-          this.isHeader = false;
-        }
-
-    },
   }
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .content{
   position:relative;
-  padding-top: 64px !important;
+  margin: 0 auto;
+  padding: 10px;
+  max-width: 620px;
 }
 
 .header{
-  position: absolute;
-  top: -64px;
-  width: 100%;
+  position: sticky;
+  width: calc(100% - 20px);
+  max-width: 620px;
   z-index: 100;
   background-color: #FAFAFA;
+  top: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
 }
 
-.header.is_fixed{
-  position: fixed;
-  top: 0;
+.checkbox{
+  margin-top: 0;
 }
+
 
 .card{
   display: block;
@@ -188,6 +185,10 @@ export default {
 .cardText{
   width: 100% ;
   display: flex;
+}
+
+.loading{
+  padding: 20px;
 }
 
 </style>
