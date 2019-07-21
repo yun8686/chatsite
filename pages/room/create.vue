@@ -2,6 +2,32 @@
   <v-app id="room/create">
     <v-content>
       <v-container grid-list-xl fluid>
+        <v-card class="ma-2" v-if="display===1">
+          <v-stepper value="1">
+            <v-stepper-header class="stepperHeader">
+              <v-stepper-step step="1">ルーム設定</v-stepper-step>
+              <div class="stepeer-word">ルーム設定</div>
+              <v-divider></v-divider>
+
+              <v-stepper-step step="2"></v-stepper-step>
+              <div class="stepeer-word">パスワード設定</div>
+
+            </v-stepper-header>
+          </v-stepper>
+        </v-card>
+        <v-card class="ma-2" v-else-if="display===2">
+          <v-stepper value="2">
+            <v-stepper-header class="stepperHeader">
+              <v-stepper-step step="1" complete>ルーム設定</v-stepper-step>
+              <div class="stepeer-word">ルーム設定</div>
+              <v-divider></v-divider>
+
+              <v-stepper-step step="2"></v-stepper-step>
+              <div class="stepeer-word">パスワード設定</div>
+
+            </v-stepper-header>
+          </v-stepper>
+        </v-card>
         <v-layout wrap>
           <v-flex xs12>
             <template v-if="display===1">
@@ -23,8 +49,8 @@
                         </v-btn>
                       </v-btn-toggle>
                     </v-layout>
-                    <v-layout>
-                      <v-btn class="min-button" style="margin-left: auto;" key="next" v-on:click="next()">
+                    <v-layout class="pt-4">
+                      <v-btn class="min-button" key="next" v-on:click="next()">
                         次へ
                       </v-btn>
                     </v-layout>
@@ -39,8 +65,10 @@
                   <v-text-field key="creator_id" v-model="creator_id" label="編集用ID"></v-text-field>
                   <v-text-field key="creator_pw" v-model="creator_pw" label="編集用パスワード"></v-text-field>
                   <v-text-field key="email" v-model="email" label="メールアドレス"></v-text-field>
-                  <v-btn class="min-button" key="back" v-on:click="back()">戻る</v-btn>
-                  <v-btn class="min-button" key="commit" v-bind:disabled="isSubmitting" v-on:click="commit()">作成</v-btn>
+                  <v-layout class="pt-4">
+                    <v-btn class="min-button" key="back" v-on:click="back()">戻る</v-btn>
+                    <v-btn class="min-button" key="commit" v-bind:disabled="isSubmitting" v-on:click="commit()">作成</v-btn>
+                  </v-layout>
                 </v-container>
               </v-card>
             </template>
@@ -122,3 +150,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.stepperHeader{
+  align-items: center;
+}
+.stepeer-word{
+  margin-right: 40px;
+}
+</style>
