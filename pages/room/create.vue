@@ -3,28 +3,20 @@
     <v-content>
       <v-container grid-list-xl fluid>
         <v-card class="ma-2" v-if="display===1">
-          <v-stepper value="1">
+          <v-stepper alt-labels value="1">
             <v-stepper-header class="stepperHeader">
               <v-stepper-step step="1">ルーム設定</v-stepper-step>
-              <div class="stepeer-word">ルーム設定</div>
               <v-divider></v-divider>
-
-              <v-stepper-step step="2"></v-stepper-step>
-              <div class="stepeer-word">パスワード設定</div>
-
+              <v-stepper-step step="2">パスワード設定</v-stepper-step>
             </v-stepper-header>
           </v-stepper>
         </v-card>
         <v-card class="ma-2" v-else-if="display===2">
-          <v-stepper value="2">
+          <v-stepper alt-labels value="2">
             <v-stepper-header class="stepperHeader">
               <v-stepper-step step="1" complete>ルーム設定</v-stepper-step>
-              <div class="stepeer-word">ルーム設定</div>
               <v-divider></v-divider>
-
-              <v-stepper-step step="2"></v-stepper-step>
-              <div class="stepeer-word">パスワード設定</div>
-
+              <v-stepper-step step="2">パスワード設定</v-stepper-step>
             </v-stepper-header>
           </v-stepper>
         </v-card>
@@ -35,9 +27,8 @@
                 <v-card-title class="font-weight-bold title">ルーム作成</v-card-title>
                 <v-container class="mx-16">
                   <v-form v-model="valid" ref="form" lazy-validation>
-
-                    <v-text-field key="roomname" v-model="roomname" label="ルーム名"></v-text-field>
-                    <v-text-field key="maxmember" v-model="maxmember" label="最大入室可能人数" mask="##"></v-text-field>
+                    <v-text-field key="roomname" v-model="roomname" :rules="room_validtion" label="ルーム名"></v-text-field>
+                    <v-text-field key="maxmember" v-model="maxmember" label="最大入室可能人数" :rules="num_validtion" mask="##"></v-text-field>
                     <v-layout xs12 sm6 class="py-2 row justify-start">
                       <div class="py-2 pl-3 pr-4">公開設定</div>
                       <v-btn-toggle mandatory class="text-xs-center ml-0" v-model="is_private">
@@ -50,7 +41,7 @@
                       </v-btn-toggle>
                     </v-layout>
                     <v-layout class="pt-4">
-                      <v-btn class="min-button" key="next" v-on:click="next()">
+                      <v-btn class="min-button" key="next" v-bind:disabled="!valid" v-on:click="next()">
                         次へ
                       </v-btn>
                     </v-layout>
@@ -62,13 +53,15 @@
               <v-card class="ma-2">
                 <v-card-title class="font-weight-bold title">ルーム作成</v-card-title>
                 <v-container class="mx-16">
-                  <v-text-field key="creator_id" v-model="creator_id" label="編集用ID"></v-text-field>
-                  <v-text-field key="creator_pw" v-model="creator_pw" label="編集用パスワード"></v-text-field>
-                  <v-text-field key="email" v-model="email" label="メールアドレス"></v-text-field>
-                  <v-layout class="pt-4">
-                    <v-btn class="min-button" key="back" v-on:click="back()">戻る</v-btn>
-                    <v-btn class="min-button" key="commit" v-bind:disabled="isSubmitting" v-on:click="commit()">作成</v-btn>
-                  </v-layout>
+                  <v-form v-model="valid" ref="form2" lazy-validation>
+                    <v-text-field key="creator_id" v-model="creator_id" :rules="roomId_validtion"  label="編集用ID"></v-text-field>
+                    <v-text-field key="creator_pw" v-model="creator_pw" :rules="password_validtion"  label="編集用パスワード"></v-text-field>
+                    <v-text-field key="email" v-model="email" :rules="mail_validtion"  label="メールアドレス"></v-text-field>
+                    <v-layout class="pt-4">
+                      <v-btn class="min-button" key="back" v-on:click="back()">戻る</v-btn>
+                      <v-btn class="min-button"  key="commit" v-bind:disabled="isSubmitting && !valid" v-on:click="commit()">作成</v-btn>
+                    </v-layout>
+                  </v-form>
                 </v-container>
               </v-card>
             </template>
@@ -97,9 +90,26 @@ export default {
     creator_pw: "",
     email: "",
     isSubmitting: false,
+    btnFlag: false,
+    room_validtion: [ 
+      v => !!v || '入力してください'
+    ],
+    num_validtion: [ 
+      v => !!v || '入力してください'
+    ],
+    roomId_validtion: [ 
+      v => !!v || '入力してください'
+    ],
+    password_validtion: [ 
+      v => !!v || '入力してください'
+    ],
+    mail_validtion: [ 
+      v => !!v || '入力してください'
+    ],
   }),
   mounted: async function(){
     await this.getUser();
+
   },
   methods:{
     // 認証情報
@@ -113,15 +123,18 @@ export default {
       }
       return this.user = user;
     },
-
     next: async function (message) {
-      this.display++;
+      if(this.$refs.form.validate()){
+        this.display++;
+      }
     },
     back: function (message) {
       this.display--;
     },
     commit: async function (message) {
-      this.isSubmitting = true;
+      if(this.$refs.form2.validate()){
+        this.isSubmitting = false;
+      }
       const batch = db.batch();
       const chatId = db.collection("chats").doc().id;
 
@@ -143,7 +156,7 @@ export default {
         exit_message: "${author}さんが森に返っていきました。",
       });
       await batch.commit();
-      this.isSubmitting = false;
+      this.isSubmitting = true;
     },
     isExistsCreatorId: async function(creator_id){
     },
@@ -154,8 +167,5 @@ export default {
 <style lang="scss" scoped>
 .stepperHeader{
   align-items: center;
-}
-.stepeer-word{
-  margin-right: 40px;
 }
 </style>

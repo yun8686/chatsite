@@ -9,6 +9,9 @@
               key="creator_id"
               v-model="creator_id"
               label="ルームID"
+              :rules="roomID"
+              :counter="10"
+              required
             ></v-text-field>
             <v-text-field
               key="creator_pw"
@@ -47,6 +50,10 @@ export default {
     creator_id: "",
     creator_pw: "12",
     items: [],
+    roomID: [ 
+      v => !!v || 'Name is required',
+      v => v.length <= 10 || 'Name must be less than 10 characters'],
+    roomNum: false,
   }),
   mounted: async function(){
     await this.getUser();

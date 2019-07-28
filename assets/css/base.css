@@ -14,6 +14,8 @@
 
 .v-card {
   max-width: 600px;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .v-list{
@@ -21,4 +23,11 @@
   max-width: 620px;
   background-color: #FAFAFA !important;
   margin: 0 auto;
+}
+
+/* ステップの文言が消えてしまうのを無効化する */
+@media only screen and (max-width: 959px){
+  .v-stepper:not(.v-stepper--vertical) .v-stepper__label {
+    display: block;
+  }
 }
