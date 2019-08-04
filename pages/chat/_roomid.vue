@@ -43,7 +43,7 @@
               <title class="chatTitle">{{title}}</title>
             </div>
           </header>
-          <div class="chat-list">
+          <div id="chat-list" class="chat-list">
             <template v-for="(item, index) in items">
               <v-subheader
                 v-if="item.header"
@@ -132,6 +132,9 @@ export default {
           .collection("messages")
           .orderBy('createdAt', 'asc')
           .onSnapshot(doc=>{
+            var isScroll = false;
+            var lastChatDivs = document.querySelectorAll('#chat-list>div');
+            var lastChatDiv = lastChatDivs[lastChatDivs.length-1];
             doc.docChanges().forEach(v=>{
               if(v.type == "added"){
                 const data = v.doc.data();
@@ -154,6 +157,10 @@ export default {
                 });
               }
             });
+            console.log(lastChatDiv);
+            if(this.isDisplay(lastChatDiv)){
+              setTimeout(()=>this.scrollBottom(), 100);
+            }
           });
       }else{
         messageSnapshotUnstab();
@@ -224,10 +231,14 @@ export default {
         message: this.keyword,
         createdAt: new Date(),
       });
-      // 一番下にスクロールする
     },
+    // 一番下にスクロールする
     async scrollBottom(){
       document.querySelector("body").scrollIntoView(false);
+    },
+    // 画面に表示されているかどうかチェック
+    isDisplay(element){
+      return element.getBoundingClientRect().top-window.outerHeight <= 0;
     }
   }
 }
