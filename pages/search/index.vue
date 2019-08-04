@@ -1,7 +1,7 @@
 <template>
   <v-app id="search/index">
     <v-content class="content">
-      <v-card class="fixed-top px-2 header" :class="{is_fixed:isHeader}" v-if="loading==false">
+      <v-card class="fixed-top px-2 header" :class="{is_fixed:isHeader}">
         <v-form ref="form">
           <v-layout>
               <v-text-field
@@ -9,7 +9,7 @@
                 v-model="keyword"
                 label="キーワードをいれてください"
                 class="px-2"
-                v-on:input="search()"
+                @blur="search()"
               ></v-text-field>
           <!-- <v-btn class="button" key="search" v-on:click="search()">検索</v-btn> -->
           </v-layout>
@@ -37,7 +37,6 @@
             v-else
             :href="item.link"
             :key="item.key"
-            @click="search()"
             class="pa-1 card"
           >
             <v-list-tile-content class="px-3 pt-2">
