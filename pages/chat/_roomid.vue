@@ -4,10 +4,10 @@
       <v-layout row>
         <v-flex xl8>
           <header class="header" v-if="inRoom">
-            <title class="chatTitle">{{title}}</title>
             <v-form ref="form">
               <v-btn key="logout" v-on:click="logout()" v-if="inRoom" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
             </v-form>
+            <title class="chatTitle">{{title}}</title>
           </header>
           <div class="chat-list" v-if="inRoom">
             <template v-for="(item, index) in items">
@@ -217,9 +217,11 @@ export default {
   display: block;
   width: 100%;
   font-size: 14px;
+  font-weight: bold;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-left: 4px;
 }
 .exitBtn{
   min-width: 24px !important;
@@ -234,6 +236,8 @@ export default {
 .chat-list{
   padding-top: 40px;
   padding-bottom: 40px;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 // チャット部分
@@ -246,7 +250,7 @@ export default {
     display: inline-block;
     max-width: 300px;
     margin: 0px 20px;
-    padding: 8px 15px; /* ふきだし内の余白 */
+    padding: 8px 18px; /* ふきだし内の余白 */
     background: #f0f0f0; /* 背景色 */
     text-align: left; /* テキストの揃え */
     border-radius: 15px;
@@ -267,7 +271,7 @@ export default {
 
     .speechBubble::after{
       right: -10px;
-      left: 10px;
+      left: inherit;
     }
   }
 
@@ -367,6 +371,7 @@ div.card__actions .btn{
 .commentInput{
   height: 64px;
   padding-top: 4px;
+  margin-left: 8px;
 }
 
 </style>

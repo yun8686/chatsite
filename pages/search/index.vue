@@ -73,6 +73,7 @@ export default {
     keyword: "",
     items: [],
     scrollY: 0,
+    checkbox1: false,
     isHeader: false,
   }),
   mounted: function(){
@@ -137,6 +138,7 @@ export default {
   margin: 0 auto;
   padding: 10px;
   max-width: 620px;
+  width: 100%;
 }
 
 .header{
@@ -188,6 +190,7 @@ export default {
 
 .loading{
   padding: 20px;
+  max-width: 640px;
+  min-width: 100%;
 }
-
 </style>
