@@ -38,7 +38,7 @@
               </div>
             </template>
           </div>
-          
+
           <div class="">
             <v-form ref="form">
               <v-text-field key="keyword" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
@@ -48,16 +48,16 @@
           </div>
 
           <footer class="footer">
-            <v-form ref="form">
+            <v-form ref="form" @submit.prevent="submit">
               <div class="footerContents">
                 <v-btn small key="image" v-on:click="imgae()" v-if="inRoom" class="ma-0 imageBtn">
                   <v-icon>add_photo_alternate</v-icon>
                 </v-btn>
                 <v-text-field class="commentInput" key="keyword" single-line outline v-if="inRoom" v-model="keyword" label="コメント記入"></v-text-field>
-                <!-- <v-btn key="talk" v-on:click="submit()" v-if="inRoom" class="commentBtn">
+                <!-- <v-btn key="talk" v-on:click="submit" v-if="inRoom" class="commentBtn">
                   <v-icon>send</v-icon>
                 </v-btn> -->
-                <v-btn small key="talk" v-on:click="submit()" v-if="inRoom" class="ma-0 commentBtn">
+                <v-btn small key="talk" v-on:click="submit" v-if="inRoom" class="ma-0 commentBtn">
                   <v-icon>send</v-icon>
                 </v-btn>
               </div>

@@ -2,14 +2,14 @@
   <v-app id="search/index">
     <v-content class="content">
       <v-card class="fixed-top px-2 header" :class="{is_fixed:isHeader}">
-        <v-form ref="form">
+        <v-form ref="form" @submit.prevent="search">
           <v-layout>
               <v-text-field
                 key="keyword"
                 v-model="keyword"
                 label="キーワードをいれてください"
                 class="px-2"
-                @blur="search()"
+                @blur="search"
               ></v-text-field>
           <!-- <v-btn class="button" key="search" v-on:click="search()">検索</v-btn> -->
           </v-layout>
