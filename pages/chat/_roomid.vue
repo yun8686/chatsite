@@ -2,12 +2,46 @@
   <v-app id="chat/room">
     <v-container fluid grid-list-xl>
       <v-layout row>
-        <v-flex xl8>
+        <v-flex>
           <header class="header">
-            <v-form ref="form">
-              <v-btn key="logout" v-on:click="logout()" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
-            </v-form>
-            <title class="chatTitle">{{title}}</title>
+            <div class="headerContents">
+              <v-form ref="form">
+                <v-btn key="logout" v-if="!inRoom" v-on:click="logout()" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+                <v-layout justify-center v-if="inRoom">
+                  <v-btn key="logout" @click.stop="dialog = true" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+                  <v-dialog
+                    v-model="dialog"
+                    max-width="290"
+                  >
+                    <v-card>
+                      <v-card-title class="headline">この部屋から<br>退出しますか？</v-card-title>
+                      <v-card-text>
+                        再入室する場合は、名前を再入力していただく必要があります。
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="min-button"
+                          text
+                          @click="logout()"
+                        >
+                          はい
+                        </v-btn>
+
+                        <v-btn
+                          color="min-button"
+                          text
+                          @click="dialog = false"
+                        >
+                          いいえ
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-layout>
+              </v-form>
+              <title class="chatTitle">{{title}}</title>
+            </div>
           </header>
           <div class="chat-list">
             <template v-for="(item, index) in items">
@@ -43,7 +77,7 @@
             <v-form ref="form">
               <div class="footerContents">
                 <v-text-field key="keyword" class="entryName" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
-                <v-btn key="login" class="button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
+                <v-btn key="login" class="min-button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
                 <!-- <v-btn key="logout" v-on:click="logout()" v-if="!inRoom">退室</v-btn> -->
               </div>
             </v-form>
@@ -88,6 +122,7 @@ export default {
     roomId: null,
     title: "",
     showState: "",
+    dialog: false,
   }),
   watch: {
     inRoom: function(val){
@@ -180,7 +215,6 @@ export default {
     async logout() {
       this.items = [];
       roomRef.collection("members").doc(this.user.uid).delete();
-      this.inRoom = false;
       window.history.back();
     },
     async submit() {
@@ -203,8 +237,8 @@ export default {
 <style lang="scss" scoped>
 /* ヘッダー */
 .header{
-  display: flex;
   width: 100%;
+  height: 32px;
   position: fixed;
   top: 0;
   right: 0;
@@ -214,15 +248,23 @@ export default {
   z-index: 100;
   align-items: center;
 }
+.headerContents{
+  display: flex;
+  align-items: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
 .chatTitle{
   display: block;
   width: 100%;
+  height: 32px;
   font-size: 14px;
+  line-height: 2.29;
   font-weight: bold;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-left: 4px;
+  padding-left: 16px;
 }
 .exitBtn{
   min-width: 24px !important;
@@ -301,7 +343,7 @@ export default {
   }
   .author{
     font-size: 12px;
-    line-height: 18px;
+    line-height: 1.5;
     min-height: 18px;
     padding-left: 18px;
   }
@@ -338,6 +380,8 @@ export default {
 }
 .footerContents{
   display: flex;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .imageBtn{
