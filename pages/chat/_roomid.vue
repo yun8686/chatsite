@@ -3,13 +3,13 @@
     <v-container fluid grid-list-xl>
       <v-layout row>
         <v-flex xl8>
-          <header class="header" v-if="inRoom">
+          <header class="header">
             <v-form ref="form">
-              <v-btn key="logout" v-on:click="logout()" v-if="inRoom" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+              <v-btn key="logout" v-on:click="logout()" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
             </v-form>
             <title class="chatTitle">{{title}}</title>
           </header>
-          <div class="chat-list" v-if="inRoom">
+          <div class="chat-list">
             <template v-for="(item, index) in items">
               <v-subheader
                 v-if="item.header"
@@ -39,25 +39,24 @@
             </template>
           </div>
 
-          <div class="">
-            <v-form ref="form">
-              <v-text-field key="keyword" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
-              <v-btn key="login" v-on:click="login()" v-if="!inRoom">入室</v-btn>
-              <v-btn key="logout" v-on:click="logout()" v-if="!inRoom">退室</v-btn>
-            </v-form>
-          </div>
-
           <footer class="footer">
-            <v-form ref="form" @submit.prevent="submit">
+            <v-form ref="form">
               <div class="footerContents">
-                <v-btn small key="image" v-on:click="imgae()" v-if="inRoom" class="ma-0 imageBtn">
+                <v-text-field key="keyword" class="entryName" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
+                <v-btn key="login" class="button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
+                <!-- <v-btn key="logout" v-on:click="logout()" v-if="!inRoom">退室</v-btn> -->
+              </div>
+            </v-form>
+            <v-form ref="form" @submit.prevent="submit"  v-if="inRoom">
+              <div class="footerContents">
+                <v-btn small key="image" v-on:click="imgae()" class="ma-0 imageBtn">
                   <v-icon>add_photo_alternate</v-icon>
                 </v-btn>
-                <v-text-field class="commentInput" key="keyword" single-line outline v-if="inRoom" v-model="keyword" label="コメント記入"></v-text-field>
-                <!-- <v-btn key="talk" v-on:click="submit" v-if="inRoom" class="commentBtn">
+                <v-text-field class="commentInput" key="keyword" single-line outline v-model="keyword" label="コメント記入"></v-text-field>
+                <!-- <v-btn key="talk" v-on:click="submit" class="commentBtn">
                   <v-icon>send</v-icon>
                 </v-btn> -->
-                <v-btn small key="talk" v-on:click="submit" v-if="inRoom" class="ma-0 commentBtn">
+                <v-btn small key="talk" v-on:click="submit" class="ma-0 commentBtn">
                   <v-icon>send</v-icon>
                 </v-btn>
               </div>
@@ -103,9 +102,6 @@ export default {
                 const data = v.doc.data();
                 // コメントの表示判定
                 // 自分のコメントを右側に表示、他の人のコメントは左側に表示、システム側のコメントは中央に表示
-                console.log(this.name);
-                console.log(data.author);
-                console.log(data.author == this.name);
                 if(this.name == data.author){
                   this.showState = 'is-mine';
                 }
@@ -185,6 +181,7 @@ export default {
       this.items = [];
       roomRef.collection("members").doc(this.user.uid).delete();
       this.inRoom = false;
+      window.history.back();
     },
     async submit() {
       // 発言
@@ -193,6 +190,10 @@ export default {
         message: this.keyword,
         createdAt: new Date(),
       });
+      // 一番下にスクロールする
+    },
+    async scrollBottom(){
+      document.querySelector("body").scrollIntoView(false);
     }
   }
 }
@@ -372,6 +373,15 @@ div.card__actions .btn{
   height: 64px;
   padding-top: 4px;
   margin-left: 8px;
+}
+
+.entryName{
+  margin-left: 8px;
+}
+
+.entryBtn{
+  max-width: inherit;
+  margin-top: 12px;
 }
 
 </style>
