@@ -6,7 +6,7 @@
           <header class="header">
             <div class="headerContents">
               <v-form ref="form">
-                <v-btn key="logout" v-if="!inRoom" v-on:click="logout()" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+                <v-btn key="logout" v-if="!inRoom" v-on:click="logout()" to="/search" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
                 <v-layout justify-center v-if="inRoom">
                   <v-btn key="logout" @click.stop="dialog = true" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
                   <v-dialog
@@ -24,6 +24,7 @@
                           color="min-button"
                           text
                           @click="logout()"
+                          to="/search"
                         >
                           はい
                         </v-btn>
@@ -222,7 +223,7 @@ export default {
     async logout() {
       this.items = [];
       roomRef.collection("members").doc(this.user.uid).delete();
-      window.history.back();
+      // window.history.back();
     },
     async submit() {
       // 発言
@@ -283,7 +284,6 @@ export default {
   box-shadow: none !important;
   margin: 0;
   padding: 0;
-  padding-left: 8px;
   align-self: center;
 }
 
@@ -409,7 +409,6 @@ export default {
   box-shadow: none !important;
   margin: 0;
   padding: 0;
-  padding-left: 8px;
   align-self: center;
 }
 .v-icon{
