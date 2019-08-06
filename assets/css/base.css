@@ -12,6 +12,10 @@
   font-weight: bold;
 }
 
+.min-button__grey{
+  background-color: #E4E4E4 !important;
+}
+
 .v-card {
   max-width: 600px;
   margin-left: auto !important;

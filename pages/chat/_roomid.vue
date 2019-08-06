@@ -2,48 +2,48 @@
   <v-app id="chat/room">
     <v-container fluid grid-list-xl>
       <v-layout row>
-        <v-flex>
-          <header class="header">
-            <div class="headerContents">
-              <v-form ref="form">
-                <v-btn key="logout" v-if="!inRoom" v-on:click="logout()" to="/search" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
-                <v-layout justify-center v-if="inRoom">
-                  <v-btn key="logout" @click.stop="dialog = true" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
-                  <v-dialog
-                    v-model="dialog"
-                    max-width="290"
-                  >
-                    <v-card>
-                      <v-card-title class="headline">この部屋から<br>退出しますか？</v-card-title>
-                      <v-card-text>
-                        再入室する場合は、名前を再入力していただく必要があります。
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="min-button"
-                          text
-                          @click="logout()"
-                          to="/search"
-                        >
-                          はい
-                        </v-btn>
+        <header class="header">
+          <div class="headerContents">
+            <v-form ref="form">
+              <v-btn key="logout" v-if="!inRoom" v-on:click="logout()" to="/search" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+              <v-layout justify-center v-if="inRoom">
+                <v-btn key="logout" @click.stop="dialog = true" class="exitBtn"><v-icon>arrow_back</v-icon></v-btn>
+                <v-dialog
+                  v-model="dialog"
+                  max-width="290"
+                >
+                  <v-card>
+                    <v-card-title class="headline">この部屋から<br>退出しますか？</v-card-title>
+                    <v-card-text>
+                      再入室する場合は、名前を再入力していただく必要があります
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="min-button min-button__grey"
+                        text
+                        @click="logout()"
+                        to="/search"
+                      >
+                        はい
+                      </v-btn>
 
-                        <v-btn
-                          color="min-button"
-                          text
-                          @click="dialog = false"
-                        >
-                          いいえ
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-layout>
-              </v-form>
-              <title class="chatTitle">{{title}}</title>
-            </div>
-          </header>
+                      <v-btn
+                        color="min-button"
+                        text
+                        @click="dialog = false"
+                      >
+                        いいえ
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-layout>
+            </v-form>
+            <title class="chatTitle">{{title}}</title>
+          </div>
+        </header>
+        <v-flex v-if="inRoom">
           <div id="chat-list" class="chat-list">
             <template v-for="(item, index) in items">
               <v-subheader
@@ -73,32 +73,31 @@
               </div>
             </template>
           </div>
-
-          <footer class="footer">
-            <v-form ref="form">
-              <div class="footerContents">
-                <v-text-field key="keyword" class="entryName" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
-                <v-btn key="login" class="min-button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
-                <!-- <v-btn key="logout" v-on:click="logout()" v-if="!inRoom">退室</v-btn> -->
-              </div>
-            </v-form>
-            <v-form ref="form" @submit.prevent="submit"  v-if="inRoom">
-              <div class="footerContents">
-                <v-btn small key="image" v-on:click="imgae()" class="ma-0 imageBtn">
-                  <v-icon>add_photo_alternate</v-icon>
-                </v-btn>
-                <v-text-field class="commentInput" key="keyword" single-line outline v-model="keyword" label="コメント記入"></v-text-field>
-                <!-- <v-btn key="talk" v-on:click="submit" class="commentBtn">
-                  <v-icon>send</v-icon>
-                </v-btn> -->
-                <v-btn small key="talk" v-on:click="submit" class="ma-0 commentBtn">
-                  <v-icon>send</v-icon>
-                </v-btn>
-              </div>
-            </v-form>
-          </footer>
-
         </v-flex>
+        <div class="noLogin-background" v-if="!inRoom">
+          <div class="noLogin">
+            チャットを始めるには、名前を入力して入室を押してください
+          </div>
+        </div>
+        <footer class="footer">
+          <v-form ref="form">
+            <div class="footerContents">
+              <v-text-field key="keyword" class="entryName" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
+              <v-btn key="login" class="min-button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
+            </div>
+          </v-form>
+          <v-form ref="form" @submit.prevent="submit"  v-if="inRoom">
+            <div class="footerContents">
+              <v-btn small key="image" v-on:click="imgae()" class="ma-0 imageBtn">
+                <v-icon>add_photo_alternate</v-icon>
+              </v-btn>
+              <v-text-field class="commentInput" key="keyword" single-line outline v-model="keyword" label="コメント記入"></v-text-field>
+              <v-btn small key="talk" v-on:click="submit" class="ma-0 commentBtn">
+                <v-icon>send</v-icon>
+              </v-btn>
+            </div>
+          </v-form>
+        </footer>
       </v-layout>
     </v-container>
   </v-app>
@@ -436,6 +435,37 @@ div.card__actions .btn{
 .entryBtn{
   max-width: inherit;
   margin-top: 12px;
+}
+
+.headline{
+  font-size: 20px !important;
+}
+
+.noLogin-background{
+  background: rgba(0,0,0,0.7);
+  position: absolute;
+  width: 100%;
+  height:100%;
+}
+
+.noLogin{
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  font-size: 20px;
+  line-height: 2.29;
+  font-weight: bold;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+  border-radius: 2px;
+  text-decoration: none;
+  padding: 16px;
+  top: 0;
+  bottom:0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  background-color: #FFF;
+
 }
 
 </style>
