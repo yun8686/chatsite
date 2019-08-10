@@ -20,7 +20,7 @@
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn
-                        color="min-button min-button__grey"
+                        color="min-button"
                         text
                         @click="logout()"
                         to="/search"
@@ -29,7 +29,7 @@
                       </v-btn>
 
                       <v-btn
-                        color="min-button"
+                        color="min-button min-button__grey"
                         text
                         @click="dialog = false"
                       >
@@ -63,7 +63,7 @@
                     <img class="iconImage" src="http://icooon-mono.com/i/icon_11213/icon_112131_64.png">
                   </div>
                 </div>
-                <div>
+                <div class="contents" :class="[item.show]">
                   <div class="author" v-html="item.author"></div>
                   <div class="speechBubble" :class="[item.show]">
                     <div class="message" v-html="item.message"></div>
@@ -76,7 +76,7 @@
         </v-flex>
         <div class="noLogin-background" v-if="!inRoom">
           <div class="noLogin">
-            チャットを始めるには、名前を入力して入室を押してください
+            チャットを始めるには、<br/>名前を入力してください
           </div>
         </div>
         <footer class="footer">
@@ -86,17 +86,19 @@
               <v-btn key="login" class="min-button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
             </div>
           </v-form>
-          <v-form ref="form" @submit.prevent="submit"  v-if="inRoom">
+          <!-- <v-form ref="form" @submit.prevent="submit"  v-if="inRoom"> -->
+          <div v-if="inRoom">
             <div class="footerContents">
               <v-btn small key="image" v-on:click="imgae()" class="ma-0 imageBtn">
                 <v-icon>add_photo_alternate</v-icon>
               </v-btn>
-              <v-text-field class="commentInput" key="keyword" single-line outline v-model="keyword" label="コメント記入"></v-text-field>
+              <v-textarea class="commentInput" key="keyword" single-line outline v-model="keyword" label="コメント記入" :auto-grow="true" :rows="rows" @keydown.enter="trigger" placeholder="コメント記入"></v-textarea>
               <v-btn small key="talk" v-on:click="submit" class="ma-0 commentBtn">
                 <v-icon>send</v-icon>
               </v-btn>
             </div>
-          </v-form>
+          </div>
+          <!-- </v-form> -->
         </footer>
       </v-layout>
     </v-container>
@@ -123,6 +125,7 @@ export default {
     title: "",
     showState: "",
     dialog: false,
+    rows: 1,
   }),
   watch: {
     inRoom: function(val){
@@ -169,6 +172,7 @@ export default {
   },
   mounted: async function(){
     await this.getUser();
+    console.log(this.keyword)
     this.roomId = this.$route.params.roomid;
     roomRef = db.collection("chats").doc(this.roomId);
     // タイトルを取得
@@ -228,7 +232,7 @@ export default {
       // 発言
       roomRef.collection('messages').add({
         author: this.name,
-        message: this.keyword,
+        message: this.keyword.replace(/\n/g, "<br/>"),
         createdAt: new Date(),
       });
     },
@@ -239,6 +243,17 @@ export default {
     // 画面に表示されているかどうかチェック
     isDisplay(element){
       return element.getBoundingClientRect().top-window.outerHeight <= 0;
+    },
+    // エンターキー入力時の処理
+    async trigger(event){
+        // 日本語入力中のEnterキー操作は無効にする
+        if (event.keyCode !== 13 || event.keyCode == 13 && event.shiftKey) return false;
+        this.submit();
+        this.keyword = '';
+        const textarea = document.getElementsByTagName('textarea');
+        textarea[0].style.height = '';
+        // 改行の処理を止める
+        event.preventDefault();
     }
   }
 }
@@ -321,6 +336,7 @@ export default {
   // じぶんの場合
   &.is-mine{
     flex-direction: row-reverse;
+    margin-left: auto;
 
     .speechBubble::after{
       right: -10px;
@@ -345,7 +361,11 @@ export default {
     left: 0;
     margin: auto;
   }
-
+  .contents{
+    &.is-mine{
+      text-align: right;
+    }
+  }
   .message{
     font-size: 14px;
     word-break: break-all;
@@ -355,11 +375,11 @@ export default {
     font-size: 12px;
     line-height: 1.5;
     min-height: 18px;
-    padding-left: 18px;
+    padding:0 18px;
   }
   .date{
     font-size: 10px;
-    padding-left: 20px;
+    padding:0 20px;
   }
 
   // システム表示
@@ -423,9 +443,9 @@ div.card__actions .btn{
 }
 
 .commentInput{
-  height: 64px;
   padding-top: 4px;
   margin-left: 8px;
+  margin-bottom: -24px;
 }
 
 .entryName{
@@ -442,7 +462,7 @@ div.card__actions .btn{
 }
 
 .noLogin-background{
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.5);
   position: absolute;
   width: 100%;
   height:100%;
@@ -465,7 +485,5 @@ div.card__actions .btn{
   left: 0;
   margin: auto;
   background-color: #FFF;
-
 }
-
 </style>
