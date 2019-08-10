@@ -11,9 +11,9 @@
                 class="px-2"
                 @blur="search"
               ></v-text-field>
-          <!-- <v-btn class="button" key="search" v-on:click="search()">検索</v-btn> -->
+          <v-btn class="min-button search-button" key="search" v-on:click="search()">検索</v-btn>
           </v-layout>
-          <v-checkbox class="px-2 checkbox" v-model="checkbox1" :label="`満員の場合は表示しない`"></v-checkbox>
+          <v-checkbox class="pl-2 checkbox" v-model="checkbox1" :label="`満員の場合は表示しない`"></v-checkbox>
         </v-form>
       </v-card>
       <v-list two-line>
@@ -157,7 +157,6 @@ export default {
   margin-top: 0;
 }
 
-
 .card{
   display: block;
   height: 100%;
@@ -192,5 +191,17 @@ export default {
   padding: 20px;
   max-width: 640px;
   min-width: 100%;
+}
+
+.v-text-field{
+  margin-top: 8px;
+}
+
+.search-button{
+  margin-top: 12px;
+}
+
+.v-input__control{
+
 }
 </style>
