@@ -56,7 +56,7 @@
                   <v-form v-model="valid" ref="form2" lazy-validation>
                     <v-text-field key="creator_id" v-model="creator_id" :rules="roomId_validtion"  label="編集用ID"></v-text-field>
                     <v-text-field key="creator_pw" v-model="creator_pw" :rules="password_validtion"  label="編集用パスワード"></v-text-field>
-                    <v-text-field key="email" v-model="email" :rules="mail_validtion"  label="メールアドレス"></v-text-field>
+                    <!-- <v-text-field key="email" v-model="email" :rules="mail_validtion"  label="メールアドレス"></v-text-field> -->
                     <v-layout class="pt-4">
                       <v-btn class="min-button" key="back" v-on:click="back()">戻る</v-btn>
                       <v-btn class="min-button"  key="commit" v-bind:disabled="isSubmitting && !valid" v-on:click="commit()">作成</v-btn>
@@ -156,6 +156,9 @@ export default {
         exit_message: "${author}さんが森に返っていきました。",
       });
       await batch.commit();
+      // 画面遷移
+      this.$router.replace('/room/complete');
+
       this.isSubmitting = true;
     },
     isExistsCreatorId: async function(creator_id){
