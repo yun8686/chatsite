@@ -1,6 +1,6 @@
 <template>
   <v-app id="room/create">
-    <v-content>
+    <v-content v-if="display===1 || display===2">
       <v-container grid-list-xl fluid>
         <v-card class="ma-2" v-if="display===1">
           <v-stepper alt-labels value="1">
@@ -69,6 +69,23 @@
         </v-layout>
       </v-container>
     </v-content>
+    <v-content v-if="display===3">
+      <v-container grid-list-xl fluid>
+        <v-card class="ma-2 pb-4">
+          <v-card-title class="font-weight-bold title">ルームの作成完了</v-card-title>
+          <v-card-text class="body-1">
+            部屋を作成しました。以下のURLを共有してチャットをすることができます。
+          </v-card-text>
+        <input
+            class="input__copy"
+            type="text"
+            readonly="true"
+            v-model="room_url"
+            @click="copyURL"
+        >
+        </v-card>
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 
@@ -91,19 +108,20 @@ export default {
     email: "",
     isSubmitting: false,
     btnFlag: false,
-    room_validtion: [ 
+    room_url: "",
+    room_validtion: [
       v => !!v || '入力してください'
     ],
-    num_validtion: [ 
+    num_validtion: [
       v => !!v || '入力してください'
     ],
-    roomId_validtion: [ 
+    roomId_validtion: [
       v => !!v || '入力してください'
     ],
-    password_validtion: [ 
+    password_validtion: [
       v => !!v || '入力してください'
     ],
-    mail_validtion: [ 
+    mail_validtion: [
       v => !!v || '入力してください'
     ],
   }),
@@ -132,37 +150,50 @@ export default {
       this.display--;
     },
     commit: async function (message) {
-      if(this.$refs.form2.validate()){
-        this.isSubmitting = false;
-      }
-      const batch = db.batch();
-      const chatId = db.collection("chats").doc().id;
-
-      batch.set(db.collection("chats").doc(chatId), {
-        title: this.roomname, tags: ["わいわい", "20代"],
-        maxmember: this.maxmember,
-        nowmember: 0,
-        is_private: this.is_private,
-      });
-      batch.set(db.collection("manages").doc(chatId), {
-        title: this.roomname,
-        creator_uid: this.user.uid,
-        creator_id: this.creator_id,
-        creator_pw: this.creator_pw,
-        email:this.email,
-      });
-      batch.set(db.collection("chat_options").doc(chatId), {
-        welcome_message: "ようこそ、${author}さん",
-        exit_message: "${author}さんが森に返っていきました。",
-      });
-      await batch.commit();
-      // 画面遷移
-      this.$router.replace('/room/complete');
-
       this.isSubmitting = true;
+      if(this.$refs.form2.validate()){
+        const batch = db.batch();
+        const chatId = db.collection("chats").doc().id;
+
+        batch.set(db.collection("chats").doc(chatId), {
+          title: this.roomname, tags: ["わいわい", "20代"],
+          maxmember: this.maxmember,
+          nowmember: 0,
+          is_private: this.is_private,
+        });
+        batch.set(db.collection("manages").doc(chatId), {
+          title: this.roomname,
+          creator_uid: this.user.uid,
+          creator_id: this.creator_id,
+          creator_pw: this.creator_pw,
+          email:this.email,
+        });
+        batch.set(db.collection("chat_options").doc(chatId), {
+          welcome_message: "ようこそ、${author}さん",
+          exit_message: "${author}さんが森に返っていきました。",
+        });
+        await batch.commit();
+
+        // チャットルームのurlを作成
+        this.room_url = location.origin + "/chat/" + chatId;
+
+        // 画面遷移
+        this.display++;
+      }
+      this.isSubmitting = false;
     },
     isExistsCreatorId: async function(creator_id){
     },
+    async copyURL(e){
+      const textarea = e.currentTarget;
+      // 文字をすべて選択
+      textarea.select();
+      // コピー
+      document.execCommand("copy");
+      // コピーをお知らせする
+      alert("URLをコピーしました");
+    }
+
   }
 }
 </script>
@@ -170,5 +201,13 @@ export default {
 <style lang="scss" scoped>
 .stepperHeader{
   align-items: center;
+}
+.input__copy{
+  border: 1px solid #E4E4E4;
+  border-radius: 3px;
+  width: calc(100% - 24px);
+  height: 48px;
+  padding-left: 12px;
+  margin: 0 12px;
 }
 </style>
