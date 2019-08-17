@@ -7,14 +7,21 @@ const fireStore = admin.firestore();
 const firestore = functions.firestore;
 
 const roomRef = fireStore.collection('chats');
+const chatOptionRef = fireStore.collection('chat_options');
 
 const onDelete = firestore
 .document('/chats/{roomid}/members/{memberid}')
 .onDelete((snapshot, context)=>{
-  // チャットメンバー更新時の処理
+  // チャットメンバー削除時の処理
   const userdata = snapshot.data();
   const roomid = context.params.roomid;
-  roomRef.doc(roomid).collection('messages').add({"author": null, "message": userdata.name+"さんが退室しました", "createdAt": new Date()});
+  chatOptionRef.doc(roomid).get().then(chatOption=>{
+    roomRef.doc(roomid).collection('messages').add({
+      "author": null,
+      "message": chatOption.data().exit_message.replace(/\$\{author\}/g, userdata.name),
+      "createdAt": new Date()
+    });
+  });
   return true;
 });
 
@@ -24,7 +31,13 @@ const onCreate = firestore
   // チャットメンバー作成時の処理
   const userdata = snapshot.data();
   const roomid = context.params.roomid;
-  roomRef.doc(roomid).collection('messages').add({"author": null, "message": userdata.name+"さんが入室しました", "createdAt": new Date()});
+  chatOptionRef.doc(roomid).get().then(chatOption=>{
+    roomRef.doc(roomid).collection('messages').add({
+      "author": null,
+      "message": chatOption.data().welcome_message.replace(/\$\{author\}/g, userdata.name),
+      "createdAt": new Date()
+    });
+  });
   return true;
 });
 
