@@ -22,6 +22,8 @@
               <v-btn class="button font-weight-bold white--text" key="commit" to="/room/edit/manage">編集</v-btn>
             </v-layout>
           </v-form>
+
+          <v-card-title class="font-weight-bold title">作成したルーム一覧</v-card-title>
           <v-list two-line>
             <template v-for="(item, index) in items">
               <v-list-tile :key="'item'+index" :to="item.link">
