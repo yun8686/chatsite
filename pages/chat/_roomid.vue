@@ -44,7 +44,7 @@
           </div>
         </header>
         <v-flex v-if="inRoom">
-          <div id="chat-list" class="chat-list">
+          <div id="chat-list" class="chat-list" :scroll="getScrollValue()">
             <template v-for="(item, index) in items">
               <v-subheader
                 v-if="item.header"
@@ -77,15 +77,15 @@
         <div class="noLogin-background" v-if="!inRoom">
           <div class="noLogin">
             チャットを始めるには、<br/>名前を入力してください
+            <v-form ref="form">
+              <div class="footerContents">
+                <v-text-field key="keyword" class="entryName" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
+                <v-btn key="login" class="min-button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
+              </div>
+            </v-form>
           </div>
         </div>
         <footer class="footer">
-          <v-form ref="form">
-            <div class="footerContents">
-              <v-text-field key="keyword" class="entryName" v-if="!inRoom" v-model="name" label="名前"></v-text-field>
-              <v-btn key="login" class="min-button entryBtn" v-on:click="login()" v-if="!inRoom">入室</v-btn>
-            </div>
-          </v-form>
           <!-- <v-form ref="form" @submit.prevent="submit"  v-if="inRoom"> -->
           <div v-if="inRoom">
             <div class="footerContents">
@@ -101,12 +101,45 @@
           <!-- </v-form> -->
         </footer>
       </v-layout>
+      <div class="toBottom" v-show="position < (listScroll - 660)" @click="scrollBottom()">
+        <v-btn class="mx-2" fab dark small>
+          <v-icon>arrow_downward</v-icon>
+        </v-btn>
+      </div>
     </v-container>
   </v-app>
 </template>
 
 
 <script>
+function smoothLink(scrollValue = 0) {
+  const targetY = scrollValue; //設定したスクロール値を格納
+  const interval = 20;
+  const divisor = 8; //近く割合（数値が大きいほどゆっくり近く）
+  const range = (divisor / 2) + 1; //どこまで近づけば処理を終了するか(無限ループにならないように divisor から算出)
+  let toY;
+  let nowY = window.pageYOffset; //現在のスクロール値
+  //スクロール終了まで繰り返す処理
+  (function doScroll() {
+    toY = nowY + Math.round((targetY - nowY) / divisor); //次に移動する場所（近く割合は除数による。）
+    window.scrollTo(0, toY); //スクロールさせる
+    nowY = toY; //nowY更新
+    if (document.body.clientHeight - window.innerHeight < toY) {
+      //最下部にスクロールしても対象まで届かない場合は下限までスクロールして強制終了
+      window.scrollTo(0, document.body.clientHeight);
+      return;
+    }
+    if (toY >= targetY + range || toY <= targetY - range) {
+      //+-rangeの範囲内へ近くまで繰り返す
+      window.setTimeout(doScroll, interval);
+    } else {
+      //+-range の範囲内にくれば正確な値へ移動して終了。
+      window.scrollTo(0, targetY);
+    }
+  })();
+}
+
+
 import firebase from '@/plugins/firebase';
 const db = firebase.firestore();
 let roomRef = null;
@@ -126,6 +159,8 @@ export default {
     showState: "",
     dialog: false,
     rows: 1,
+    position: 0,
+    listScroll: 0,
   }),
   watch: {
     inRoom: function(val){
@@ -160,10 +195,6 @@ export default {
                 });
               }
             });
-            console.log(lastChatDiv);
-            if(this.isDisplay(lastChatDiv)){
-              setTimeout(()=>this.scrollBottom(), 100);
-            }
           });
       }else{
         messageSnapshotUnstab();
@@ -172,7 +203,6 @@ export default {
   },
   mounted: async function(){
     await this.getUser();
-    console.log(this.keyword)
     this.roomId = this.$route.params.roomid;
     roomRef = db.collection("chats").doc(this.roomId);
     // タイトルを取得
@@ -201,6 +231,10 @@ export default {
         }
       });
     });
+    // スクロールイベントを取得
+    document.onscroll = (e) => {
+      this.position = document.documentElement.scrollTop || document.body.scrollTop;
+    };
   },
   methods:{
     // 認証情報
@@ -236,14 +270,6 @@ export default {
         createdAt: new Date(),
       });
     },
-    // 一番下にスクロールする
-    async scrollBottom(){
-      document.querySelector("body").scrollIntoView(false);
-    },
-    // 画面に表示されているかどうかチェック
-    isDisplay(element){
-      return element.getBoundingClientRect().top-window.outerHeight <= 0;
-    },
     // エンターキー入力時の処理
     async trigger(event){
         // 日本語入力中のEnterキー操作は無効にする
@@ -254,7 +280,17 @@ export default {
         textarea[0].style.height = '';
         // 改行の処理を止める
         event.preventDefault();
-    }
+    },
+    // 一番下にスクロールする
+    async scrollBottom(){
+      const list = document.getElementById('chat-list');
+      smoothLink(this.listScroll);
+    },
+    async getScrollValue(){
+      const list = document.getElementById('chat-list');
+      if(!list) return false;
+      this.listScroll = list.scrollHeight;
+    },
   }
 }
 </script>
@@ -469,7 +505,8 @@ div.card__actions .btn{
 }
 
 .noLogin{
-  width: 300px;
+  width: auto;
+  max-width: 400px;
   height: 200px;
   position: absolute;
   font-size: 20px;
@@ -483,7 +520,16 @@ div.card__actions .btn{
   bottom:0;
   right: 0;
   left: 0;
-  margin: auto;
+  margin: auto 8px;
   background-color: #FFF;
+  @media screen and (min-width:400px) { 
+    margin: auto;
+  }
+}
+.toBottom{
+  position: fixed;
+  right: 0px;
+  bottom: 68px;
+  opacity: 0.5;
 }
 </style>
