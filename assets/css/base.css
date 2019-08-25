@@ -1,3 +1,9 @@
+.logo{
+  width: 20%;
+  min-width: 272px;
+  padding: 8px;
+}
+
 .button{
   min-width: 300px;
   background-color: #26A69A !important;
