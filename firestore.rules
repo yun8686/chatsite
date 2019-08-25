@@ -34,7 +34,7 @@ service cloud.firestore {
     }
 		match /chat_options/{roomid} { // 部屋オプション
     	allow create: if isAuth(request.auth.uid);
-      allow read: if isManager(get(/databases/$(database)/documents/manages/$(roomid)), request.auth.uid);
+      allow read,write: if isManager(get(/databases/$(database)/documents/manages/$(roomid)), request.auth.uid);
     }
   }
 }

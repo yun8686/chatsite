@@ -11,7 +11,7 @@
             <!-- ↓↓↓ 編集完了したモーダル　↓↓↓ -->
             <v-dialog v-model="dialog" width="500">
               <template v-slot:activator="{ on }">
-                <v-btn color="button font-weight-bold white--text" key="commit" v-on="on">編集</v-btn>
+                <v-btn color="button font-weight-bold white--text" key="commit" @click="commit" v-on="on">編集</v-btn>
               </template>
               <v-card>
                 <v-card-title class="headline grey lighten-2" primary-title>
@@ -77,6 +77,13 @@ export default {
       }
       return this.user = user;
     },
+    async commit(){
+      const manageRef = await db.collection("chat_options").doc(this.roomId);
+      return manageRef.set({
+        welcome_message: this.welcome_message,
+        exit_message: this.exit_message,
+      }, {merge: true});
+    }
   }
 }
 </script>
