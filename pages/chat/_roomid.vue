@@ -264,7 +264,6 @@ export default {
     async logout() {
       this.items = [];
       roomRef.collection("members").doc(this.user.uid).delete();
-      // window.history.back();
     },
     async submit() {
       // 発言

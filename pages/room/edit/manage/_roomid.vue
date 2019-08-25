@@ -1,8 +1,9 @@
 <template>
   <v-app id="room/edit/manage">
+    <headerComponent title="ルーム編集"></headerComponent>
     <v-content>
       <v-card class="ma-2 pa-2">
-        <v-card-title class="font-weight-bold title">ルーム編集</v-card-title>
+        <!-- <v-card-title class="font-weight-bold title">ルーム編集</v-card-title> -->
         <v-form key="manager_form" v-model="valid" ref="form" lazy-validation>
           <v-text-field key="welcome_message" v-model="welcome_message" label=入室時メッセージ></v-text-field>
           <v-text-field key="exit_message" v-model="exit_message" label=退室時メッセージ></v-text-field>
@@ -40,8 +41,12 @@
 
 <script>
 import firebase from '@/plugins/firebase';
+import HeaderComponent from '../../../../pages/header'
 const db = firebase.firestore();
 export default {
+  components: {
+      HeaderComponent
+  },
   layout: 'no_header',
   data: ()=>({
     valid: true,

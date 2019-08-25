@@ -1,5 +1,6 @@
 <template>
   <v-app id="room/create">
+    <headerComponent title="ルーム作成"></headerComponent>
     <v-content v-if="display===1 || display===2">
       <v-container grid-list-xl fluid>
         <v-card class="ma-2" v-if="display===1">
@@ -24,7 +25,7 @@
           <v-flex xs12>
             <template v-if="display===1">
               <v-card class="ma-2">
-                <v-card-title class="font-weight-bold title">ルーム作成</v-card-title>
+                <!-- <v-card-title class="font-weight-bold title">ルーム作成</v-card-title> -->
                 <v-container class="mx-16">
                   <v-form v-model="valid" ref="form" lazy-validation>
                     <v-text-field key="roomname" v-model="roomname" :rules="room_validtion" label="ルーム名"></v-text-field>
@@ -92,9 +93,14 @@
 
 <script>
 import firebase from '@/plugins/firebase';
+import HeaderComponent from '../../pages/header'
+
 const db = firebase.firestore();
 
 export default {
+  components: {
+      HeaderComponent
+  },
   layout: 'no_header',
   data: ()=>({
     user: null,

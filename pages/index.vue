@@ -18,7 +18,7 @@
       </v-layout>
       <v-layout justify-center row wrap>
         <v-btn color="button font-weight-bold white--text" to="/search">公開ルームを探す</v-btn>
-        <v-btn color="button font-weight-bold white--text" to="/search">合言葉で探す</v-btn>
+        <!-- <v-btn color="button font-weight-bold white--text" to="/search">合言葉で探す</v-btn> -->
       </v-layout>
     </v-card>
   </v-flex>

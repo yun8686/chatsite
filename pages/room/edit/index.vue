@@ -1,8 +1,9 @@
 <template>
   <v-app id="room/edit/index">
+    <headerComponent title="ルーム編集"></headerComponent>
     <v-content>
       <v-card class="ma-2">
-        <v-card-title class="font-weight-bold title">ルーム編集</v-card-title>
+        <!-- <v-card-title class="font-weight-bold title">ルーム編集</v-card-title> -->
         <v-container class="mx-16">
           <v-form ref="form">
             <v-text-field
@@ -43,10 +44,14 @@
 
 <script>
 import firebase from '@/plugins/firebase';
+import HeaderComponent from '../../../pages/header'
 const db = firebase.firestore();
 
 export default {
   layout: 'no_header',
+  components: {
+      HeaderComponent
+  },
   data: ()=>({
     user: null,
     creator_id: "",
