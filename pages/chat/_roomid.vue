@@ -43,6 +43,7 @@
             <title class="chatTitle">{{title}}</title>
           </div>
         </header>
+        <!-- コメント表示箇所 -->
         <v-flex v-if="inRoom">
           <div id="chat-list" class="chat-list" :scroll="getScrollValue()">
             <template v-for="(item, index) in items">
@@ -68,7 +69,9 @@
                   <div class="speechBubble" :class="[item.show]">
                     <!-- item.imageUrlがある場合は画像 -->
                     <div v-if="item.imageUrl" class="message">
-                      <img class="sendImage" v-bind:src=item.imageUrl>
+                      <a :href=item.imageUrl target="_brank">
+                        <img class="sendImage" v-bind:src=item.imageUrl>
+                      </a>
                     </div>
                     <div v-else class="message" v-html="item.message"></div>
                   </div>
@@ -77,6 +80,12 @@
               </div>
             </template>
           </div>
+          <script>
+            window.setTimeout(
+              function(){
+                window.scrollTo(0, 3000);
+              }, 500);
+          </script>
         </v-flex>
         <div class="noLogin-background" v-if="!inRoom">
           <div class="noLogin">
@@ -336,7 +345,16 @@ export default {
         });
       });
     },
-  }
+  },
+  computed: {
+    initial: function() {
+      var firstFirstNameLetter = this.getInitialOf(this.firstName);
+      var firstLastNameLetter = this.getInitialOf(this.lastName);
+
+      var initial = firstFirstNameLetter + '.' + firstLastNameLetter + '.';
+      return initial;
+    },
+  },
 }
 </script>
 
