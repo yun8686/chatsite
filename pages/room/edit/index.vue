@@ -5,6 +5,7 @@
       <v-card class="ma-2">
         <!-- <v-card-title class="font-weight-bold title">ルーム編集</v-card-title> -->
         <v-container class="mx-16">
+        <!--
           <v-form ref="form">
             <v-text-field
               key="creator_id"
@@ -23,7 +24,7 @@
               <v-btn class="button font-weight-bold white--text" key="commit" to="/room/edit/manage">編集</v-btn>
             </v-layout>
           </v-form>
-
+        -->
           <v-card-title class="font-weight-bold title">作成したルーム一覧</v-card-title>
           <v-list two-line>
             <template v-for="(item, index) in items">
@@ -57,7 +58,7 @@ export default {
     creator_id: "",
     creator_pw: "12",
     items: [],
-    roomID: [ 
+    roomID: [
       v => !!v || 'Name is required',
       v => v.length <= 10 || 'Name must be less than 10 characters'],
     roomNum: false,
@@ -95,4 +96,3 @@ export default {
 <style lang="sass" scoped>
 
 </style>
-
