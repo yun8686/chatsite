@@ -84,7 +84,7 @@
             window.setTimeout(
               function(){
                 window.scrollTo(0, 3000);
-              }, 500);
+              }, 1000);
           </script>
         </v-flex>
         <div class="noLogin-background" v-if="!inRoom">
@@ -155,6 +155,7 @@ function smoothLink(scrollValue = 0) {
 
 
 import firebase from '@/plugins/firebase';
+import { setTimeout } from 'timers';
 const db = firebase.firestore();
 let roomRef = null;
 let messageSnapshotUnstab = ()=>{};
@@ -275,23 +276,30 @@ export default {
       roomRef.collection("members").doc(this.user.uid).delete();
     },
     async submit() {
+      if(this.keyword === '') return;
       // 発言
       roomRef.collection('messages').add({
         author: this.name,
         message: this.keyword.replace(/\n/g, "<br/>"),
         createdAt: new Date(),
       });
+      this.refreshInputText();
+      this.scrollBottom();
     },
     // エンターキー入力時の処理
     async trigger(event){
         // 日本語入力中のEnterキー操作は無効にする
         if (event.keyCode !== 13 || event.keyCode == 13 && event.shiftKey) return false;
         this.submit();
+        this.scrollBottom();
+        this.refreshInputText();
+        // 改行の処理を止める
+        event.preventDefault();
+    },
+    refreshInputText(){
         this.keyword = '';
         const textarea = document.getElementsByTagName('textarea');
         textarea[0].style.height = '';
-        // 改行の処理を止める
-        event.preventDefault();
     },
     // 一番下にスクロールする
     async scrollBottom(){
