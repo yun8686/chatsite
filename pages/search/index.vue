@@ -1,5 +1,6 @@
 <template>
   <v-app id="search/index">
+    <headerComponent title="検索画面" link="/"></headerComponent>
     <v-content class="content">
       <v-card class="fixed-top px-2 header" :class="{is_fixed:isHeader}">
         <v-form ref="form" @submit.prevent="search">
@@ -64,10 +65,14 @@
 
 <script>
 import firebase from '@/plugins/firebase';
+import HeaderComponent from '../../pages/header'
 const db = firebase.firestore();
 
 export default {
   layout: 'no_header',
+  components: {
+      HeaderComponent
+  },
   data: ()=>({
     loading: true,
     keyword: "",
@@ -135,7 +140,7 @@ export default {
 <style lang="scss" scoped>
 .content{
   position:relative;
-  margin: 0 auto;
+  margin: 8px auto 0;
   padding: 10px;
   max-width: 620px;
   width: 100%;

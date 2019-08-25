@@ -1,6 +1,6 @@
 <template>
   <v-app id="room/edit/index">
-    <headerComponent title="ルーム編集"></headerComponent>
+    <headerComponent title="ルーム編集" link="/"></headerComponent>
     <v-content>
       <v-card class="ma-2">
         <!-- <v-card-title class="font-weight-bold title">ルーム編集</v-card-title> -->

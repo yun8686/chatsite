@@ -1,13 +1,13 @@
 <template>
   <v-card class="header__box">
-    <v-btn class="btn" to="../"><v-icon class="icon">arrow_back</v-icon></v-btn>
+    <v-btn class="btn" :to=link><v-icon class="icon">arrow_back</v-icon></v-btn>
       <p class="header__title">{{title}}</p>
   </v-card>
 </template>
 
 <script>
 export default {
-    props: ['title']
+    props: ['title','link']
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <v-app id="room/create">
-    <headerComponent title="ルーム作成"></headerComponent>
+    <headerComponent title="ルーム作成" link="/"></headerComponent>
     <v-content v-if="display===1 || display===2">
       <v-container grid-list-xl fluid>
         <v-card class="ma-2" v-if="display===1">
