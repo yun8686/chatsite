@@ -183,13 +183,11 @@ export default {
                 const data = v.doc.data();
                 // コメントの表示判定
                 // 自分のコメントを右側に表示、他の人のコメントは左側に表示、システム側のコメントは中央に表示
-                if(this.name == data.author){
-                  this.showState = 'is-mine';
-                }
-                else if(!data.author){
+                if(!data.author){
                   this.showState = 'is-system';
-                }
-                else{
+                }else if(this.name == data.author){
+                  this.showState = 'is-mine';
+                }else{
                   this.showState = 'is-other';
                 }
                 this.items.push({

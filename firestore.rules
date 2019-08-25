@@ -12,9 +12,11 @@ service cloud.firestore {
     	allow create;
       match /messages/{document=**} { // メッセージはメンバーのみ
         allow read; 	// : if isMember(database, roomid, request.auth.uid);
-        allow write:
-          if isMember(database, roomid, request.auth.uid)
-          && request.resource.data.message != ""; // 空白メッセージは許可しない
+        allow write: if
+        	isMember(database, roomid, request.auth.uid)
+        && request.resource.data.author != ""
+        && request.resource.data.message != ""
+        ;
       }
       match /members/{document=**} {  // メンバーの参照はメンバーのみ可能
         allow read; //: if isMember(database, roomid, request.auth.uid);
