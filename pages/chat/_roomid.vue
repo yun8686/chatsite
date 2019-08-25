@@ -83,7 +83,8 @@
           <script>
             window.setTimeout(
               function(){
-                window.scrollTo(0, 3000);
+                const chatList = document.getElementById('chat-list');
+                window.scrollTo(0, chatList.scrollHeight);
               }, 1000);
           </script>
         </v-flex>
@@ -303,8 +304,14 @@ export default {
     },
     // 一番下にスクロールする
     async scrollBottom(){
-      const list = document.getElementById('chat-list');
       smoothLink(this.listScroll);
+      this.setTimeScrollBottom();
+    },
+    async setTimeScrollBottom(){
+      window.setTimeout(function(){
+        const list = document.getElementById('chat-list');
+        window.scrollTo(0, list.scrollHeight);
+      }, 100);
     },
     async getScrollValue(){
       const list = document.getElementById('chat-list');
@@ -352,6 +359,7 @@ export default {
           });
         });
       });
+      this.scrollBottom();
     },
   },
   computed: {
