@@ -68,7 +68,7 @@
                   <div class="speechBubble" :class="[item.show]">
                     <!-- item.imageUrlがある場合は画像 -->
                     <div v-if="item.imageUrl" class="message">
-                      <img class="iconImage" v-bind:src=item.imageUrl>
+                      <img class="sendImage" v-bind:src=item.imageUrl>
                     </div>
                     <div v-else class="message" v-html="item.message"></div>
                   </div>
@@ -444,6 +444,10 @@ export default {
     right: 0;
     left: 0;
     margin: auto;
+  }
+  .sendImage{
+    width: 100%;
+    max-width: 300px;
   }
   .contents{
     &.is-mine{
