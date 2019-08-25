@@ -66,7 +66,11 @@
                 <div class="contents" :class="[item.show]">
                   <div class="author" v-html="item.author"></div>
                   <div class="speechBubble" :class="[item.show]">
-                    <div class="message" v-html="item.message"></div>
+                    <!-- item.imageUrlがある場合は画像 -->
+                    <div v-if="item.imageUrl" class="message">
+                      <img class="iconImage" v-bind:src=item.imageUrl>
+                    </div>
+                    <div v-else class="message" v-html="item.message"></div>
                   </div>
                   <div class="date" v-html="item.createdAt"></div>
                 </div>
@@ -89,7 +93,8 @@
           <!-- <v-form ref="form" @submit.prevent="submit"  v-if="inRoom"> -->
           <div v-if="inRoom">
             <div class="footerContents">
-              <v-btn small key="image" v-on:click="imgae()" class="ma-0 imageBtn">
+              <input type="file" style="display: none" ref="image" accept="image/*" @change="onFileChange">
+              <v-btn small key="image" v-on:click="pickImage()" class="ma-0 imageBtn">
                 <v-icon>add_photo_alternate</v-icon>
               </v-btn>
               <v-textarea class="commentInput" key="keyword" single-line outline v-model="keyword" label="コメント記入" :auto-grow="true" :rows="rows" @keydown.enter="trigger" placeholder="コメント記入"></v-textarea>
@@ -190,6 +195,7 @@ export default {
                 this.items.push({
                   author: data.author,
                   message: data.message,
+                  imageUrl: data.imageUrl,
                   createdAt: String(data.createdAt.toDate().getMonth()+1) + '/' + String(data.createdAt.toDate().getDate()) + '  ' + String(data.createdAt.toDate().toLocaleTimeString()),
                   show: this.showState,
                 });
@@ -290,6 +296,48 @@ export default {
       const list = document.getElementById('chat-list');
       if(!list) return false;
       this.listScroll = list.scrollHeight;
+    },
+
+    // ファイル選択を表示
+    pickImage() {
+      this.$refs.image.click()
+    },
+
+    // ファイルアップロード処理
+    onFileChange (e) {
+      let files = e.target.files || e.dataTransfer.files;
+      console.log("onFileChange",files);
+      // ファイルのチェック
+      // ファイルタイプ
+      var myFileType = files[0].type;
+      var fileTypeCheck = false;
+      var fileExtensions = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
+      for (var i = 0; i < fileExtensions.length; i++) {
+        var fileExtension = fileExtensions[i];
+        if (myFileType.indexOf(fileExtension) > -1) {
+          fileTypeCheck = true;
+          break;
+        }
+      }
+      if (!fileTypeCheck) {
+//        this.isError = true
+//        this.errorMessage = 'アップロードできるファイルは画像のみです。'
+        return
+      }
+      var file = files[0];
+      var filename = file.name;
+      var storageRef = firebase.storage().ref();
+      var fileRef = storageRef.child(`images/this.roomId/${filename}`);
+      fileRef.put(file).then(snapshot => {
+        snapshot.ref.getDownloadURL().then(downloadURL => {
+          roomRef.collection('messages').add({
+            author: this.name,
+            message: "画像",
+            imageUrl: downloadURL,
+            createdAt: new Date(),
+          });
+        });
+      });
     },
   }
 }
@@ -522,7 +570,7 @@ div.card__actions .btn{
   left: 0;
   margin: auto 8px;
   background-color: #FFF;
-  @media screen and (min-width:400px) { 
+  @media screen and (min-width:400px) {
     margin: auto;
   }
 }

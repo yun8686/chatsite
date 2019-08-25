@@ -5,7 +5,8 @@ if (!firebase.apps.length) {
     "apiKey": "AIzaSyCf2vrVfmhMJpyJH50SXKMtWaY7LacOKIk",
     "authDomain": "freeroom-53002.firebaseapp.com",
     "databaseURL": "https://freeroom-53002.firebaseio.com",
-    "projectId": "freeroom-53002"
+    "projectId": "freeroom-53002",
+    "storageBucket": "freeroom-53002.appspot.com",
   });
   const db = firebase.firestore()
 }
