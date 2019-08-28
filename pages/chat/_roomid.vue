@@ -80,13 +80,6 @@
               </div>
             </template>
           </div>
-          <script>
-            window.setTimeout(
-              function(){
-                const chatList = document.getElementById('chat-list');
-                window.scrollTo(0, chatList.scrollHeight);
-              }, 1000);
-          </script>
         </v-flex>
         <div class="noLogin-background" v-if="!inRoom">
           <div class="noLogin">
@@ -285,7 +278,9 @@ export default {
         createdAt: new Date(),
       });
       this.refreshInputText();
-      this.scrollBottom();
+      this.$nextTick(function() {
+        this.scrollBottom();
+      });
     },
     // エンターキー入力時の処理
     async trigger(event){
@@ -325,7 +320,7 @@ export default {
     },
 
     // ファイルアップロード処理
-    onFileChange (e) {
+    async onFileChange (e) {
       let files = e.target.files || e.dataTransfer.files;
       console.log("onFileChange",files);
       // ファイルのチェック
@@ -356,10 +351,11 @@ export default {
             message: "画像",
             imageUrl: downloadURL,
             createdAt: new Date(),
-          });
+          }).then(this.$nextTick(function() {
+            this.scrollBottom();
+          }));
         });
       });
-      this.scrollBottom();
     },
   },
   computed: {
