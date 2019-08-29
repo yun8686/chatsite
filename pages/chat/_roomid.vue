@@ -350,6 +350,7 @@ export default {
         snapshot.ref.getDownloadURL().then(downloadURL => {
           roomRef.collection('messages').add({
             author: this.name,
+            author_uid: this.user.uid,
             message: "画像",
             imageUrl: downloadURL,
             createdAt: new Date(),
