@@ -189,13 +189,14 @@ export default {
                 // 自分のコメントを右側に表示、他の人のコメントは左側に表示、システム側のコメントは中央に表示
                 if(!data.author){
                   this.showState = 'is-system';
-                }else if(this.name == data.author){
+                }else if(this.user.uid == data.author_uid){
                   this.showState = 'is-mine';
                 }else{
                   this.showState = 'is-other';
                 }
                 this.items.push({
                   author: data.author,
+                  author_uid: data.author_uid,
                   message: data.message,
                   imageUrl: data.imageUrl,
                   createdAt: String(data.createdAt.toDate().getMonth()+1) + '/' + String(data.createdAt.toDate().getDate()) + '  ' + String(data.createdAt.toDate().toLocaleTimeString()),
@@ -274,6 +275,7 @@ export default {
       // 発言
       roomRef.collection('messages').add({
         author: this.name,
+        author_uid: this.user.uid,
         message: this.keyword.replace(/\n/g, "<br/>"),
         createdAt: new Date(),
       });
