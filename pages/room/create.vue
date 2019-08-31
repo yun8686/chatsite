@@ -178,6 +178,11 @@ export default {
           welcome_message: "ようこそ、${author}さん",
           exit_message: "${author}さんが森に返っていきました。",
         });
+        batch.set(db.collection("chat_auth").doc(this.creator_id), {
+          chatId: chatId,
+          pw: this.creator_pw,
+        });
+
         await batch.commit();
 
         // チャットルームのurlを作成

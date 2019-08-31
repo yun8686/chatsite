@@ -8,6 +8,7 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/chats/$(roomid)/members/$(uid));
     }
 		match /chats/{roomid} { // チャットルーム
+    	allow delete;
     	allow read;
     	allow create;
       match /messages/{document=**} { // メッセージはメンバーのみ
@@ -21,6 +22,7 @@ service cloud.firestore {
       match /members/{document=**} {  // メンバーの参照はメンバーのみ可能
         allow read; //: if isMember(database, roomid, request.auth.uid);
         allow write;	//: if isMember(database, roomid, request.auth.uid);
+	    	allow delete;
       }
 
     }
@@ -31,10 +33,16 @@ service cloud.firestore {
 		match /manages/{roomid} { // 管理者情報
     	allow create: if isAuth(request.auth.uid);
       allow read: if isManager(resource, request.auth.uid);
+      allow delete: if isManager(resource, request.auth.uid);
     }
 		match /chat_options/{roomid} { // 部屋オプション
     	allow create: if isAuth(request.auth.uid);
       allow read,write: if isManager(get(/databases/$(database)/documents/manages/$(roomid)), request.auth.uid);
+      allow delete: if isManager(get(/databases/$(database)/documents/manages/$(roomid)), request.auth.uid);
+    }
+
+    match /chat_auth/{chat_id} {
+    	allow create: if !exists(/databases/$(database)/documents/chat_auth/$(chat_id));
     }
   }
 }

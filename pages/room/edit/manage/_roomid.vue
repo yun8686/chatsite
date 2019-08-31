@@ -28,7 +28,7 @@
             <!-- ↑↑↑　編集完了したモーダル　↑↑↑ -->
             <v-dialog v-model="dialog2" width="500">
               <template v-slot:activator="{ on }">
-                <v-btn color="button button__red font-weight-bold white--text" key="deleteRoom" @click="deleteRoom" v-on="on">ルーム削除</v-btn>
+                <v-btn color="button button__red font-weight-bold white--text" key="deleteRoom" @click="dialog2=true" v-on="on">ルーム削除</v-btn>
               </template>
               <v-card>
                 <v-card-title class="headline">ルームを削除してもよろしいでしょうか？</v-card-title>
@@ -36,7 +36,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="min-button min-button__red" @click="dialog2 = false">
+                  <v-btn color="min-button min-button__red" @click="deleteRoom(); dialog2=false;">
                     はい
                   </v-btn>
                   <v-btn color="min-button min-button__grey" @click="dialog2 = false">
@@ -67,7 +67,7 @@ export default {
   layout: 'no_header',
   data: ()=>({
     valid: true,
-    creator_id2: "",
+    creator_id: "",
     roomId: null,
 
     welcome_message: null,
@@ -103,8 +103,15 @@ export default {
         exit_message: this.exit_message,
       }, {merge: true});
     },
-    deleteRoom(){
-      this.dialog2 = true
+    async deleteRoom(){
+      const batch = db.batch();
+      batch.delete(db.collection("chats").doc(this.roomId));
+      batch.delete(db.collection("manages").doc(this.roomId));
+      batch.delete(db.collection("chat_options").doc(this.roomId));
+      await batch.commit().then(v=>{
+        console.log("削除しました");
+        location.href="/"
+      });
     }
   }
 }
