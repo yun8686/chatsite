@@ -33,9 +33,8 @@
           >
             {{ item.header }}
           </v-subheader>
-
           <a
-            v-else
+            v-if="items"
             :href="item.link"
             :key="item.key"
             class="pa-1 card"
@@ -56,6 +55,7 @@
             :key="'divider'+index"
           ></v-divider>
         </template>
+        <v-list-tile-title v-if="isNoRoom() && loading==false" class="noRoom">条件に合うルームがありません</v-list-tile-title>
         </v-card>
       </v-list>
     </v-content>
@@ -135,7 +135,10 @@ export default {
         this.loading = false;
       });
     },
-  }
+    isNoRoom(){
+      return this.items.length === 0;
+    }
+  },
 }
 </script>
 
@@ -208,7 +211,12 @@ export default {
   margin-top: 12px;
 }
 
-.v-input__control{
-
+.noRoom{
+  font-size: 16px;
+  margin: 0 auto;
+  line-height: 80px;
+  height: 80px;
+  text-align: center;
+  color: #888888;
 }
 </style>

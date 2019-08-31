@@ -35,6 +35,7 @@
               </v-list-tile>
               <v-divider :key="'itemdivider'+index"></v-divider>
             </template>
+            <p v-if="isNoRoom" class="noRoom">作成したルームがありません</p>
           </v-list>
         </v-container>
       </v-card>
@@ -61,7 +62,7 @@ export default {
     roomID: [
       v => !!v || 'Name is required',
       v => v.length <= 10 || 'Name must be less than 10 characters'],
-    roomNum: false,
+    isNoRoom: false,
   }),
   mounted: async function(){
     await this.getUser();
@@ -76,6 +77,10 @@ export default {
           });
         }
       });
+      // 作成したルームがない場合
+      if(this.items.length === 0){
+        this.isNoRoom = true;
+      }
     });
   },
   methods:{
@@ -93,6 +98,13 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+.noRoom{
+  font-size: 16px;
+  margin: 0 auto;
+  line-height: 80px;
+  height: 80px;
+  text-align: center;
+  color: #888888;
+}
 </style>
