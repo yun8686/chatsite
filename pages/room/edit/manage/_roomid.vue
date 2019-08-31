@@ -14,14 +14,12 @@
                 <v-btn color="button font-weight-bold white--text" key="commit" @click="commit" v-on="on">編集</v-btn>
               </template>
               <v-card>
-                <v-card-title class="headline grey lighten-2" primary-title>
-                  編集完了
-                </v-card-title>
-                <!-- <v-card-text></v-card-text>
-                <v-divider></v-divider> -->
+                <v-card-title class="headline">編集完了</v-card-title>
+                <v-card-text>
+                </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn flat @click="dialog = false">
+                  <v-btn color="min-button" @click="dialog = false">
                     OK
                   </v-btn>
                 </v-card-actions>
