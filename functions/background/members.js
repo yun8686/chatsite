@@ -9,6 +9,8 @@ const firestore = functions.firestore;
 const roomRef = fireStore.collection('chats');
 const chatOptionRef = fireStore.collection('chat_options');
 
+const FieldValue = admin.firestore.FieldValue;
+
 const onDelete = firestore
 .document('/chats/{roomid}/members/{memberid}')
 .onDelete((snapshot, context)=>{
@@ -22,6 +24,8 @@ const onDelete = firestore
       "createdAt": new Date()
     });
   });
+  roomRef.doc(roomid).update({nowmember: FieldValue.increment(-1)});
+
   return true;
 });
 
@@ -38,6 +42,8 @@ const onCreate = firestore
       "createdAt": new Date()
     });
   });
+  roomRef.doc(roomid).update({nowmember: FieldValue.increment(1)});
+
   return true;
 });
 
