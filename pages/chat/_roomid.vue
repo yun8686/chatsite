@@ -41,6 +41,17 @@
               </v-layout>
             </v-form>
             <title class="chatTitle">{{title}}</title>
+            <v-icon @click="openMemberList">account_box</v-icon>
+              <div class="memberListBox" v-show="isMemberList">
+                <div class="memberList">
+                  <span class="memberListTitle">参加メンバー</span>
+                  <ul>
+                    <li class="memberName" v-for="item in members" v-bind:key="item.name">
+                      {{item.name}}
+                    </li>
+                  </ul>
+                </div>
+              </div>
           </div>
         </header>
         <!-- コメント表示箇所 -->
@@ -172,6 +183,7 @@ export default {
     listScroll: 0,
     loadFlag: false,
     isShowBottomBtn: false,
+    isMemberList: false,
   }),
   watch: {
     inRoom: function(val){
@@ -332,7 +344,6 @@ export default {
     pickImage() {
       this.$refs.image.click()
     },
-
     // ファイルアップロード処理
     async onFileChange (e) {
       let files = e.target.files || e.dataTransfer.files;
@@ -371,6 +382,14 @@ export default {
         });
       });
     },
+    openMemberList(){      
+      if(this.isMemberList){
+        this.isMemberList = false;
+      }
+      else{
+        this.isMemberList = true;  
+      }
+    }
   },
   computed: {
     initial: function() {
@@ -424,6 +443,7 @@ export default {
   margin: 0;
   padding: 0;
   align-self: center;
+  margin-left: 8px;
 }
 
 .chat-list{
@@ -624,5 +644,39 @@ div.card__actions .btn{
   right: 0px;
   bottom: 68px;
   opacity: 0.5;
+}
+.memberListBox{
+  position: absolute;
+  top: 30px;
+  right: 0;
+  width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  background: rgba(51, 51, 51, 0.7);
+}
+.memberList{
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.memberListTitle{
+  font-size: 12px;
+  line-height: 1;
+  color: #FFF;
+  margin-left: 8px;
+  font-weight: bold;
+}
+.memberName{
+  font-size: 12px;
+  line-height: 1.5;
+  color: #FFF;
+}
+@media only screen and (min-width: 450px){
+  .memberListTitle{
+    font-size: 14px;
+  }
+  .memberName{
+    font-size: 14px;
+  }
 }
 </style>

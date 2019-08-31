@@ -1,3 +1,8 @@
+/* リセット */
+ol, ul {
+  list-style: none;
+}
+
 .logo{
   width: 20%;
   min-width: 272px;
