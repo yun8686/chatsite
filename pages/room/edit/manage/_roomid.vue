@@ -3,11 +3,11 @@
     <headerComponent title="ルーム編集" link="/room/edit"></headerComponent>
     <v-content>
       <v-card class="ma-2 pa-2">
-        <!-- <v-card-title class="font-weight-bold title">ルーム編集</v-card-title> -->
         <v-form key="manager_form" v-model="valid" ref="form" lazy-validation>
           <v-text-field key="welcome_message" v-model="welcome_message" label=入室時メッセージ></v-text-field>
           <v-text-field key="exit_message" v-model="exit_message" label=退室時メッセージ></v-text-field>
-          <v-layout justify-center>
+          <v-layout class="btnWapper">
+            <!-- <div class="btnWapper"> -->
             <!-- ↓↓↓ 編集完了したモーダル　↓↓↓ -->
             <v-dialog v-model="dialog" width="500">
               <template v-slot:activator="{ on }">
@@ -26,6 +26,25 @@
               </v-card>
             </v-dialog>
             <!-- ↑↑↑　編集完了したモーダル　↑↑↑ -->
+            <v-dialog v-model="dialog2" width="500">
+              <template v-slot:activator="{ on }">
+                <v-btn color="button button__red font-weight-bold white--text" key="deleteRoom" @click="deleteRoom" v-on="on">ルーム削除</v-btn>
+              </template>
+              <v-card>
+                <v-card-title class="headline">ルームを削除してもよろしいでしょうか？</v-card-title>
+                <v-card-text>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="min-button min-button__red" @click="dialog2 = false">
+                    はい
+                  </v-btn>
+                  <v-btn color="min-button min-button__grey" @click="dialog2 = false">
+                    いいえ
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-layout>
         </v-form>
       </v-card>
@@ -55,6 +74,7 @@ export default {
     exit_message: null,
 
     dialog: false,
+    dialog2: false,
   }),
   mounted: async function(){
     this.roomId = this.$route.params.roomid;
@@ -76,12 +96,23 @@ export default {
       return this.user = user;
     },
     async commit(){
+      this.commit = true;
       const manageRef = await db.collection("chat_options").doc(this.roomId);
       return manageRef.set({
         welcome_message: this.welcome_message,
         exit_message: this.exit_message,
       }, {merge: true});
+    },
+    deleteRoom(){
+      this.dialog2 = true
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.btnWapper{
+  display: block;
+  text-align: center;
+}
+</style>
