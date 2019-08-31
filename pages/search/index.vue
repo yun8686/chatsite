@@ -43,7 +43,8 @@
               <v-list-tile-title class="title" v-html="item.title"></v-list-tile-title>
               <v-flex class="cardText">
                 <div>
-                  <v-list-tile-sub-title v-html="item.tags" class="relatedWord"></v-list-tile-sub-title>
+                  <!-- ルームに紐づくタグ -->
+                  <!-- <v-list-tile-sub-title v-html="item.tags" class="relatedWord"></v-list-tile-sub-title> -->
                 </div>
                 <div class="entryNum">
                   <v-list-tile-sub-title class="entryNum" v-html="'参加者' + item.nowmember + '/' + item.maxmember"></v-list-tile-sub-title>
