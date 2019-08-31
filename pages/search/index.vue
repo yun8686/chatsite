@@ -107,25 +107,27 @@ export default {
     window.addEventListener('scroll', this.handleScroll)
   },
   methods:{
-    search: async function(message) {
+    search: async function() {
+      var keyword = this.keyword;
       // 検索
       this.loading = true;
       db.collection("chats")
-//      .where('capital', '==', true)
       .get()
       .then(snapshot => {
         const items = [];
         snapshot.forEach(doc => {
-          console.log(doc.id, '=>', doc.data());
-          items.push({
-            key: doc.id,
-            title: doc.data().title,
-            tags: doc.data().tags,
-            nowmember: doc.data().nowmember||0,
-            maxmember: doc.data().maxmember||0,
-            subtitle: "",
-            link: '/chat/' + doc.id,
-          });
+          var title = doc.data().title;
+          if(title.indexOf(keyword) >= 0){
+            items.push({
+              key: doc.id,
+              title: title,
+              tags: doc.data().tags,
+              nowmember: doc.data().nowmember||0,
+              maxmember: doc.data().maxmember||0,
+              subtitle: "",
+              link: '/chat/' + doc.id,
+            });
+          }
         });
         this.items = items;
       })
