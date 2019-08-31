@@ -136,7 +136,6 @@ export default {
       });
     },
     isNoRoom(){
-      console.log(this.items.length)
       return this.items.length === 0;
     }
   },
