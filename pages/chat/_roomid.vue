@@ -45,7 +45,7 @@
         </header>
         <!-- コメント表示箇所 -->
         <v-flex v-if="inRoom">
-          <div id="chat-list" class="chat-list" :scroll="getScrollValue()">
+          <div id="chat-list" class="chat-list">
             <template v-for="(item, index) in items">
               <v-subheader
                 v-if="item.header"
@@ -70,7 +70,7 @@
                     <!-- item.imageUrlがある場合は画像 -->
                     <div v-if="item.imageUrl" class="message">
                       <a :href=item.imageUrl target="_brank">
-                        <img class="sendImage" v-bind:src=item.imageUrl>
+                        <img class="sendImage" v-bind:src=item.imageUrl v-on:load="loadImg">
                       </a>
                     </div>
                     <div v-else class="message" v-html="item.message"></div>
@@ -109,7 +109,7 @@
           <!-- </v-form> -->
         </footer>
       </v-layout>
-      <div class="toBottom" v-show="position < (listScroll - 660)" @click="scrollBottom()">
+      <div class="toBottom" v-show="isShowBottomBtn" @click="scrollBottom()">
         <v-btn class="mx-2" fab dark small>
           <v-icon>arrow_downward</v-icon>
         </v-btn>
@@ -170,6 +170,8 @@ export default {
     rows: 1,
     position: 0,
     listScroll: 0,
+    loadFlag: false,
+    isShowBottomBtn: false,
   }),
   watch: {
     inRoom: function(val){
@@ -179,9 +181,8 @@ export default {
           .collection("messages")
           .orderBy('createdAt', 'asc')
           .onSnapshot(doc=>{
-            var isScroll = false;
-            var lastChatDivs = document.querySelectorAll('#chat-list>div');
-            var lastChatDiv = lastChatDivs[lastChatDivs.length-1];
+            const chatsNum = doc.docChanges().length;
+            let index = 0;
             doc.docChanges().forEach(v=>{
               if(v.type == "added"){
                 const data = v.doc.data();
@@ -202,6 +203,10 @@ export default {
                   createdAt: String(data.createdAt.toDate().getMonth()+1) + '/' + String(data.createdAt.toDate().getDate()) + '  ' + String(data.createdAt.toDate().toLocaleTimeString()),
                   show: this.showState,
                 });
+              }
+              index++
+              if(chatsNum === index){
+                this.scrollBottom();
               }
             });
           });
@@ -243,6 +248,15 @@ export default {
     // スクロールイベントを取得
     document.onscroll = (e) => {
       this.position = document.documentElement.scrollTop || document.body.scrollTop;
+      const list = document.getElementById('chat-list');
+      if(!list) return false;
+      this.listScroll = list.scrollHeight;
+      if(this.position < (this.listScroll - 900)){
+        this.isShowBottomBtn = true;
+      }
+      else{
+        this.isShowBottomBtn = false;
+      }
     };
   },
   methods:{
@@ -289,7 +303,6 @@ export default {
         // 日本語入力中のEnterキー操作は無効にする
         if (event.keyCode !== 13 || event.keyCode == 13 && event.shiftKey) return false;
         this.submit();
-        this.scrollBottom();
         this.refreshInputText();
         // 改行の処理を止める
         event.preventDefault();
@@ -298,6 +311,11 @@ export default {
         this.keyword = '';
         const textarea = document.getElementsByTagName('textarea');
         textarea[0].style.height = '';
+    },
+    loadImg(){
+      if(this.loadFlag){
+        this.scrollBottom();
+      }
     },
     // 一番下にスクロールする
     async scrollBottom(){
@@ -310,12 +328,6 @@ export default {
         window.scrollTo(0, list.scrollHeight);
       }, 100);
     },
-    async getScrollValue(){
-      const list = document.getElementById('chat-list');
-      if(!list) return false;
-      this.listScroll = list.scrollHeight;
-    },
-
     // ファイル選択を表示
     pickImage() {
       this.$refs.image.click()
@@ -342,6 +354,7 @@ export default {
 //        this.errorMessage = 'アップロードできるファイルは画像のみです。'
         return
       }
+      this.loadFlag = true;
       var file = files[0];
       var filename = file.name;
       var storageRef = firebase.storage().ref();
@@ -354,9 +367,7 @@ export default {
             message: "画像",
             imageUrl: downloadURL,
             createdAt: new Date(),
-          }).then(this.$nextTick(function() {
-            this.scrollBottom();
-          }));
+          });
         });
       });
     },
