@@ -156,7 +156,7 @@ export default {
       this.display--;
     },
     commit: async function (message) {
-      if(this.isExistsCreatorId(this.creator_id)){
+      if(await this.isExistsCreatorId(this.creator_id)){
         alert("create_idが重複しています");
         return false;
       }
