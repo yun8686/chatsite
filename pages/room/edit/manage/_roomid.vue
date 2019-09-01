@@ -26,6 +26,17 @@
               </v-card>
             </v-dialog>
             <!-- ↑↑↑　編集完了したモーダル　↑↑↑ -->
+            <div class="roomUrl__box">
+              <div class="roomUrl__head">ルームのURL</div>
+              <input
+                class="input__copy"
+                type="text"
+                readonly="true"
+                v-model="room_url"
+                @click="copyURL"
+              >
+            </div>
+            <!-- ↑↑↑　ルーム削除のモーダル　↑↑↑ -->
             <v-dialog v-model="dialog2" width="500">
               <template v-slot:activator="{ on }">
                 <v-btn color="button button__red font-weight-bold white--text" key="deleteRoom" @click="dialog2=true" v-on="on">ルーム削除</v-btn>
@@ -45,6 +56,7 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+            <!-- ↑↑↑　ルーム削除のモーダル　↑↑↑ -->
           </v-layout>
         </v-form>
       </v-card>
@@ -75,6 +87,7 @@ export default {
 
     dialog: false,
     dialog2: false,
+    room_url: '',
   }),
   mounted: async function(){
     this.roomId = this.$route.params.roomid;
@@ -83,6 +96,9 @@ export default {
     const data = manageDoc.data();
     Object.assign(this, data);
     console.log(data);
+    // ルームのURLを生成
+    const chatId = db.collection("chats").doc().id;
+    this.room_url = location.origin + "/chat/" + chatId;
   },
   methods:{
     async getUser(){
@@ -112,6 +128,15 @@ export default {
         console.log("削除しました");
         location.href="/"
       });
+    },
+    async copyURL(e){
+      const textarea = e.currentTarget;
+      // 文字をすべて選択
+      textarea.select();
+      // コピー
+      document.execCommand("copy");
+      // コピーをお知らせする
+      alert("URLをコピーしました");
     }
   }
 }
@@ -121,5 +146,24 @@ export default {
 .btnWapper{
   display: block;
   text-align: center;
+}
+.input__copy{
+  width: 100% !important;
+  border: 1px solid #E4E4E4;
+  border-radius: 3px;
+  width: calc(100% - 24px);
+  height: 48px;
+  padding-left: 12px;
+  margin: 0;
+}
+.roomUrl__box{
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+.roomUrl__head{
+  font-size: 16px;
+  padding-left: 4px;
+  margin-bottom: 4px;
+  text-align: left;
 }
 </style>
