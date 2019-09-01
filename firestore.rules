@@ -42,6 +42,7 @@ service cloud.firestore {
     }
 
     match /chat_auth/{chat_id} {
+    	allow get: if !exists(/databases/$(database)/documents/chat_auth/$(chat_id));
     	allow create: if !exists(/databases/$(database)/documents/chat_auth/$(chat_id));
     }
   }

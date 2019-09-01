@@ -156,6 +156,10 @@ export default {
       this.display--;
     },
     commit: async function (message) {
+      if(this.isExistsCreatorId(this.creator_id)){
+        alert("create_idが重複しています");
+        return false;
+      }
       this.isSubmitting = true;
       if(this.$refs.form2.validate()){
         const batch = db.batch();
@@ -194,6 +198,11 @@ export default {
       this.isSubmitting = false;
     },
     isExistsCreatorId: async function(creator_id){
+      var flag = false;
+      var doc = await db.collection("chat_auth").doc(creator_id).get().catch((v)=>{
+        flag = true;
+      });
+      return flag;
     },
     async copyURL(e){
       const textarea = e.currentTarget;

@@ -113,6 +113,7 @@ export default {
       // 検索
       this.loading = true;
       db.collection("chats")
+      .where('is_private', '==', "false")
       .get()
       .then(snapshot => {
         const items = [];
