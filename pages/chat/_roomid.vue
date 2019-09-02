@@ -284,6 +284,9 @@ export default {
       return this.user = user;
     },
     async login(name) {
+      if(this.name === '') {
+        return false;
+      }
       // 入室
       await roomRef.collection("members").doc(this.user.uid).set({
         name: name||this.name,
