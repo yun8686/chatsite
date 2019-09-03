@@ -4,7 +4,7 @@
       <img src="../assets/image/logo.svg" class="logo">
     </v-card>
     <v-card class="ma-2">
-      <v-card-title class="font-weight-bold title">Freeオープンチャットとは</v-card-title>
+      <v-card-title ><h1 class="font-weight-bold title">Freeオープンチャットとは</h1></v-card-title>
       <v-card-text class="body-1">
         無料で手軽に作れるレンタルチャットのサイトです。<br/>
         ルームを作成してURLを共有すれば、友人とチャットをすることができます。<br/>
