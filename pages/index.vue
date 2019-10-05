@@ -21,6 +21,10 @@
         <!-- <v-btn color="button font-weight-bold white--text" to="/search">合言葉で探す</v-btn> -->
       </v-layout>
     </v-card>
+    <v-card class="pa-2 ma-2">
+      お問い合わせ先
+      https://twitter.com/kakun_furou
+    </v-card>
   </v-flex>
 </template>
 
