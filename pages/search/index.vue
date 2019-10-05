@@ -84,11 +84,10 @@ export default {
   }),
   mounted: function(){
     this.loading = true;
-    db.collection("chats").get()
+    db.collection("chats").where('is_private', '==', "false").get()
     .then(snapshot => {
       const items = [];
       snapshot.forEach(doc => {
-        console.log(doc.id, '=>', doc.data());
         items.push({
           key: doc.id,
           title: doc.data().title,
