@@ -19,7 +19,7 @@
     "cross-env": "^5.2.0",
     "express": "^4.16.4",
     "firebase": "^6.2.2",
-    "firebase-admin": "^8.2.0",
+    "firebase-admin": "^11.4.1",
     "fs": "0.0.1-security",
     "http2": "^3.3.7",
     "net": "^1.0.2",
